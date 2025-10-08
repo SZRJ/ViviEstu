@@ -1,14 +1,15 @@
 package com.viviestu.viviestu_api.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "calificaciones")
-public class Calificacion {
+@Table(name = "comentarios")
+public class Comentario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCalificacion;
+    private Integer idExperiencia;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
@@ -18,14 +19,16 @@ public class Calificacion {
     @JoinColumn(name = "id_zona", nullable = false)
     private Zona zona;
 
-    @Column(nullable = false)
-    private Integer puntuacion; // 1 a 5
+    @Column(nullable = false, length = 2000)
+    private String comentario;
 
-    public Calificacion() {}
+    private LocalDateTime fecha;
+
+    public Comentario() {}
 
     // Getters / Setters
-    public Integer getIdCalificacion() { return idCalificacion; }
-    public void setIdCalificacion(Integer idCalificacion) { this.idCalificacion = idCalificacion; }
+    public Integer getIdExperiencia() { return idExperiencia; }
+    public void setIdExperiencia(Integer idExperiencia) { this.idExperiencia = idExperiencia; }
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }
@@ -33,6 +36,9 @@ public class Calificacion {
     public Zona getZona() { return zona; }
     public void setZona(Zona zona) { this.zona = zona; }
 
-    public Integer getPuntuacion() { return puntuacion; }
-    public void setPuntuacion(Integer puntuacion) { this.puntuacion = puntuacion; }
+    public String getComentario() { return comentario; }
+    public void setComentario(String comentario) { this.comentario = comentario; }
+
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
 }
