@@ -2,9 +2,9 @@ package com.viviestu.viviestu_api.service;
 
 import com.viviestu.viviestu_api.dto.NotificacionDTO;
 import com.viviestu.viviestu_api.model.Usuario;
-import com.viviestu.viviestu_api.model.Zona;
+import com.viviestu.viviestu_api.model.Zonas;
 import com.viviestu.viviestu_api.repository.UsuarioRepository;
-import com.viviestu.viviestu_api.repository.ZonaRepository;
+import com.viviestu.viviestu_api.repository.ZonasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class RecomendacionService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private ZonaRepository zonaRepository;
+    private ZonasRepository zonasRepository;
 
     /**
      * Genera una lista simple de "notificaciones" / recomendaciones basada en universidad, presupuesto y transporte.
@@ -41,18 +41,18 @@ public class RecomendacionService {
         String transporte = u.getTransporte() == null ? "" : u.getTransporte().toLowerCase().trim();
 
         // 1) Zonas con precio <= presupuesto
-        List<Zona> porPrecio = zonaRepository.findByPrecioPromedioLessThanEqual(presupuesto);
+        List<Zonas> porPrecio = zonasRepository.findByPrecioPromedioLessThanEqual(presupuesto);
 
         // 2) Si no hay resultados, tomar zonas cercanas por seguridad o transporte (fallback)
         if (porPrecio.isEmpty()) {
-            porPrecio = zonaRepository.findAll();
+            porPrecio = zonasRepository.findAll();
         }
 
         // 3) Construir lista con prioridad: contiene transporte -> motivo "coincide transporte", else "ajusta a presupuesto" o "recomendado"
         List<NotificacionDTO> result = new ArrayList<>();
-        for (Zona z : porPrecio) {
+        for (Zonas z : porPrecio) {
             NotificacionDTO n = new NotificacionDTO();
-            n.setZonaId(z.getIdZona());
+            n.setZonaId(z.getIdZonas());
             n.setZonaNombre(z.getNombre());
             n.setPrecioPromedio(z.getPrecioPromedio());
             String motivo = "Ajuste a tu presupuesto";
