@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 @Table(name = "comentarios")
 public class Comentario {
 
+<<<<<<< Updated upstream
+=======
+public class Comentario {
+>>>>>>> Stashed changes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idExperiencia;
