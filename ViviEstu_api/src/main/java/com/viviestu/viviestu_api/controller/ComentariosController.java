@@ -2,6 +2,10 @@ package com.viviestu.viviestu_api.controller;
 
 import com.viviestu.viviestu_api.dto.ComentarioRequest;
 import com.viviestu.viviestu_api.model.Comentario;
+<<<<<<< Updated upstream
+=======
+import com.viviestu.viviestu_api.service.ComentarioService;
+>>>>>>> Stashed changes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class ComentariosController {
 
     @Autowired
+<<<<<<< Updated upstream
     private ComentariosService comentarioService;
+=======
+    private ComentarioService comentarioService;
+>>>>>>> Stashed changes
 
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<?> agregarComentario(@PathVariable("id") Integer zonaId, @RequestBody ComentarioRequest request) {
