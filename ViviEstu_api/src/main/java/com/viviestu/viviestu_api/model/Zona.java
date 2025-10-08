@@ -4,8 +4,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "zonas")
+public class Zona {
 
-public class Zonas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idZona;
@@ -17,10 +17,10 @@ public class Zonas {
     private String seguridad; // ej "alta", "media", "baja"
     private String transporteDisponible; // ej "bus, carro, caminar"
 
-    public Zonas() {}
+    public Zona() {}
 
     // Getters / Setters
-    public Integer getIdZonas() { return idZona; }
+    public Integer getIdZona() { return idZona; }
     public void setIdZona(Integer idZona) { this.idZona = idZona; }
 
     public String getNombre() { return nombre; }

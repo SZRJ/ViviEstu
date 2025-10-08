@@ -4,7 +4,8 @@ import com.viviestu.viviestu_api.model.Zona;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-public interface ZonasRepository extends JpaRepository<Zona, Integer> {
+public interface ZonaRepository extends JpaRepository<Zona, Integer> {
+
     // Buscar por transporte disponible (contiene)
     List<Zona> findByTransporteDisponibleContainingIgnoreCase(String transporte);
 

@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comentarios")
+public class Comentario {
 
-public class Comentarios {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idExperiencia;
@@ -24,7 +24,7 @@ public class Comentarios {
 
     private LocalDateTime fecha;
 
-    public Comentarios() {}
+    public Comentario() {}
 
     // Getters / Setters
     public Integer getIdExperiencia() { return idExperiencia; }
