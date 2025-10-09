@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ViviEstu - Panel de Funcionalidades</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #0057b7;
+    }
+    .panel {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      margin: 5px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .zona-card {
+      background: #e6f2ff;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .zona-card button {
+      background: #0057b7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏡 ViviEstu - Funcionalidades</h1>
+
+  <div class="panel">
+    <h2>🔍 Búsqueda Inteligente</h2>
+    <form id="formBusqueda">
+      Distrito: <input type="text" id="distrito">
+      Precio min: <input type="number" id="precioMin">
+      Precio max: <input type="number" id="precioMax">
+      Transporte: <input type="text" id="transporte">
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultados"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⭐ Favoritos</h2>
+    <button onclick="verFavoritos()">Ver Favoritos</button>
+    <div id="favoritos"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⚖️ Comparar Zonas</h2>
+    <input type="text" id="idsComparar" placeholder="Ejemplo: 1,2,3">
+    <button onclick="compararZonas()">Comparar</button>
+    <div id="comparacion"></div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+
+    // 🔍 Búsqueda con filtros
+    document.getElementById('formBusqueda').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const distrito = document.getElementById('distrito').value;
+      const precioMin = document.getElementById('precioMin').value;
+      const precioMax = document.getElementById('precioMax').value;
+      const transporte = document.getElementById('transporte').value;
+
+      const url = `${API_URL}/busqueda?distrito=${distrito}&precio_min=${precioMin}&precio_max=${precioMax}&transporte=${transporte}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const cont = document.getElementById('resultados');
+      cont.innerHTML = '';
+      if (data.resultados) {
+        data.resultados.forEach(z => {
+          cont.innerHTML += `
+            <div class="zona-card">
+              <b>${z.nombre}</b><br>
+              Precio: S/${z.precio_promedio}<br>
+              Seguridad: ${z.seguridad}<br>
+              <button onclick="agregarFavorito(${z.id_zona})">Agregar a Favoritos</button>
+            </div>
+          `;
+        });
+      } else {
+        cont.innerHTML = `<p>No se encontraron resultados.</p>`;
+      }
+    });
+
+    // ⭐ Agregar favorito
+    async function agregarFavorito(idZona) {
+      const body = { id_usuario: 1, id_zona: idZona };
+      const res = await fetch(`${API_URL}/favoritos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      alert(data.mensaje || 'Favorito agregado');
+    }
+
+    // 📋 Ver favoritos
+    async function verFavoritos() {
+      const res = await fetch(`${API_URL}/favoritos/1`);
+      const data = await res.json();
+      const cont = document.getElementById('favoritos');
+      cont.innerHTML = '';
+      data.favoritos?.forEach(fav => {
+        const z = fav.Zona;
+        cont.innerHTML += `
+          <div class="zona-card">
+            <b>${z.nombre}</b><br>
+            Distrito: ${z.distrito}<br>
+            Precio: S/${z.precio_promedio}<br>
+            <button onclick="eliminarFavorito(${z.id_zona})">Eliminar</button>
+          </div>
+        `;
+      });
+    }
+
+    // ❌ Eliminar favorito
+    async function eliminarFavorito(idZona) {
+      const res = await fetch(`${API_URL}/favoritos`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_usuario: 1, id_zona: idZona })
+      });
+      const data = await res.json();
+      alert(data.mensaje);
+      verFavoritos();
+    }
+
+    // ⚖️ Comparar zonas
+    async function compararZonas() {
+      const ids = document.getElementById('idsComparar').value;
+      const res = await fetch(`${API_URL}/comparar?ids=${ids}`);
+      const data = await res.json();
+      const cont = document.getElementById('comparacion');
+      cont.innerHTML = '';
+
+      if (data.zonas_comparadas) {
+        data.zonas_comparadas.forEach(z => {
+          cont.innerHTML += `
+            <div class="zona-card">
+              <b>${z.nombre}</b><br>
+              Precio: S/${z.precio_promedio}<br>
+              Seguridad: ${z.seguridad}<br>
+              Transporte: ${z.transporte}
+            </div>
+          `;
+        });
+        cont.innerHTML += `<p><b>Precio promedio general:</b> S/${data.estadisticas.precio_promedio_general}</p>`;
+      } else {
+        cont.innerHTML = `<p>No se pudieron comparar las zonas.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ViviEstu - Funcionalidades</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #ecf0f1;
+      border-radius: 5px;
+    }
+
+    .favorito {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .mapa {
+  width: 100%;
+  height: 250px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+  margin-top: 10px;
+}
+
+  </style>
+</head>
+<body>
+
+  <h1>🏙️ ViviEstu - Funcionalidades del Backend</h1>
+
+  <!-- ZONAS -->
+  <section>
+    <h2>1️⃣ Información por Zona</h2>
+    <input type="number" id="zonaId" placeholder="ID de la zona" />
+    <button onclick="obtenerZona()">Ver Zona</button>
+    <div id="zonaResultado" class="result"></div>
+  </section>
+
+  <!-- MAPA -->
+  <section>
+    <h2>2️⃣ Mapa de Ubicación</h2>
+    <div id="mapa" class="mapa"></div>
+  </section>
+
+  <!-- RUTAS -->
+  <section>
+    <h2>3️⃣ Rutas y Transporte</h2>
+    <input type="number" id="rutaZona" placeholder="ID de zona" />
+    <button onclick="obtenerRutas()">Ver Rutas</button>
+    <div id="rutaResultado" class="result"></div>
+  </section>
+
+  <!-- BÚSQUEDA -->
+  <section>
+    <h2>4️⃣ Búsqueda con Filtros</h2>
+    <input type="text" id="filtro" placeholder="Ejemplo: precio < 3000" />
+    <button onclick="buscarPropiedades()">Buscar</button>
+    <div id="busquedaResultado" class="result"></div>
+  </section>
+
+  <!-- FAVORITOS -->
+  <section>
+    <h2>5️⃣ Propiedades Favoritas ❤️</h2>
+    <button onclick="obtenerFavoritos()">Ver Favoritos</button>
+    <div id="favoritosResultado" class="result"></div>
+  </section>
+
+  <script>
+    const API = 'http://localhost:3000/api';
+
+    // 1️⃣ Zonas
+    async function obtenerZona() {
+      const id = document.getElementById('zonaId').value;
+      const res = await fetch(`${API}/zonas/${id}`);
+      const data = await res.json();
+      document.getElementById('zonaResultado').innerHTML = `
+        <strong>Zona:</strong> ${data.nombre || 'Zona no encontrada'}<br>
+        <strong>Descripción:</strong> ${data.descripcion || 'N/A'}
+      `;
+      // Mostrar mapa si tiene coordenadas
+      if (data.lat && data.lng) {
+        mostrarMapa(data.lat, data.lng);
+      }
+    }
+
+    // 2️⃣ Mapa (OpenStreetMap con Leaflet)
+    function mostrarMapa(lat = -12.0464, lng = -77.0428) {
+
+  if (window.L) {
+    if (window.mapa) {
+      window.mapa.setView([lat, lng], 13);
+      L.marker([lat, lng]).addTo(window.mapa)
+        .bindPopup("Ubicación seleccionada")
+        .openPopup();
+    } else {
+      window.mapa = L.map('mapa').setView([lat, lng], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(window.mapa);
+      L.marker([lat, lng]).addTo(window.mapa)
+        .bindPopup("Ubicación inicial")
+        .openPopup();
+    }
+    return;
+  }
+
+ 
+  const link = document.createElement('link');
+  link.rel = "stylesheet";
+  link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+  document.head.appendChild(link);
+
+  const script = document.createElement('script');
+  script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  script.onload = () => mostrarMapa(lat, lng); 
+  document.body.appendChild(script);
+}
+
+
+    // 3️⃣ Rutas
+    async function obtenerRutas() {
+      const id = document.getElementById('rutaZona').value;
+      const res = await fetch(`${API}/rutas/${id}`);
+      const data = await res.json();
+      const html = data.rutas
+        ? data.rutas.map(r => `<div>🚌 ${r.medio}: ${r.tiempo_aprox} - S/${r.costo}</div>`).join('')
+        : 'No hay rutas disponibles';
+      document.getElementById('rutaResultado').innerHTML = html;
+    }
+
+ // 4️⃣ Búsqueda simulada
+async function buscarPropiedades() {
+  const filtro = document.getElementById('filtro').value;
+  const res = await fetch(`${API}/busqueda?filtro=${encodeURIComponent(filtro)}`);
+  const data = await res.json();
+
+  if (!data.resultados || !data.resultados.length) {
+    document.getElementById('busquedaResultado').innerHTML = 'Sin resultados.';
+    return;
+  }
+
+  document.getElementById('busquedaResultado').innerHTML =
+    data.resultados.map((p, i) => `
+      <div style="margin-bottom: 10px;">
+        🏠 ${p.nombre} - S/${p.precio}
+        <button onclick="agregarFavorito('${p.nombre}', ${p.precio})">❤️ Agregar a Favoritos</button>
+      </div>
+    `).join('');
+}
+
+
+    // 5️⃣ Favoritos
+    async function obtenerFavoritos() {
+      const res = await fetch(`${API}/favoritos`);
+      const data = await res.json();
+      const html = data.length
+        ? data.map(f => `
+          <div class="favorito">
+            <strong>${f.nombre_propiedad}</strong><br>
+            📍 ${f.direccion}<br>
+            💰 S/${f.precio}<br>
+          </div>
+        `).join('')
+        : 'No tienes favoritos guardados.';
+      document.getElementById('favoritosResultado').innerHTML = html;
+    }
+    // ❤️ Agregar propiedad a favoritos
+async function agregarFavorito(nombre, precio) {
+  const favorito = {
+    usuario_id: 1, // por ahora fijo (podrías usar el ID del usuario logueado)
+    propiedad_id: Math.floor(Math.random() * 1000), // simulamos un ID
+    nombre_propiedad: nombre,
+    direccion: 'Sin dirección',
+    precio
+  };
+
+  const res = await fetch(`${API}/favoritos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(favorito)
+  });
+
+  const data = await res.json();
+  alert(`✅ ${data.nombre_propiedad} se añadió a favoritos`);
+
+  // Opcional: actualizar la lista de favoritos automáticamente
+  obtenerFavoritos();
+}
+
+  </script>
+
+</body>
+</html>
