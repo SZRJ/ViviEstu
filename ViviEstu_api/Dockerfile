@@ -5,10 +5,9 @@ FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 # Copiar código fuente al contenedor
 COPY . .
-# Dar permisos de ejecución al Maven Wrapper
-RUN chmod +x mvnw
-# Construir la aplicación (sin ejecutar tests)
-RUN ./mvnw clean package -DskipTests
+RUN apt-get update && apt-get install -y maven
+RUN mvn clean package -DskipTests
+
 # -------- Imagen final --------
 FROM eclipse-temurin:21-jdk
 # Definir directorio de trabajo
