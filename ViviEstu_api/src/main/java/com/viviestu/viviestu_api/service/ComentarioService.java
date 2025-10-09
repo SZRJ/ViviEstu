@@ -25,7 +25,7 @@ public class ComentarioService {
     @Autowired
     private ZonaRepository zonaRepository;
 
-    public Comentario agregarComentario(Integer zonaId, Integer usuarioId, String texto) throws IllegalArgumentException {
+    public Comentario agregarComentario(Integer zonaId, Long usuarioId, String texto) throws IllegalArgumentException {
         if (texto == null || texto.trim().isEmpty()) {
             throw new IllegalArgumentException("El comentario no puede estar vacío");
         }
