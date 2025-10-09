@@ -5,11 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
+
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "id_usuario")
     private Long idUsuario;
 
@@ -28,10 +30,18 @@ public class Usuario {
     @Column(name = "contrasena", nullable = false)
     private String contrasena;
 
+    @Column(nullable = false)
+    private boolean verificado = false;
+
+    @Column(nullable = false)
+    private boolean activo = true;
+
     // Relación Uno a Muchos con Preferencias
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Preferencias> preferencias;
+    private List<Preferencia> preferencias;
+
+    public Usuario() {}
 
     // ---- GETTERS & SETTERS ----
     public Long getIdUsuario() {
@@ -82,11 +92,27 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    public List<Preferencias> getPreferencias() {
+    public boolean isVerificado() {
+        return verificado;
+    }
+
+    public void setVerificado(boolean verificado) {
+        this.verificado = verificado;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public List<Preferencia> getPreferencias() {
         return preferencias;
     }
 
-    public void setPreferencias(List<Preferencias> preferencias) {
+    public void setPreferencias(List<Preferencia> preferencias) {
         this.preferencias = preferencias;
     }
 }

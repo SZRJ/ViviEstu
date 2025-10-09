@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -54,6 +56,17 @@ public class UsuarioService {
         return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
 
-
-
+    /**
+     * Desactiva la cuenta del usuario (marca activo = false) solo si confirmacion == true.
+     */
+    public boolean desactivarCuenta(Long idUsuario, boolean confirmacion) {
+        if (!confirmacion) return false;
+        Optional<Usuario> opt = usuarioRepository.findById(idUsuario);
+        if (!opt.isPresent()) return false;
+        Usuario u = opt.get();
+        if (!u.isActivo()) return false; // ya inactivo
+        u.setActivo(false);
+        usuarioRepository.save(u);
+        return true;
+    }
 }
