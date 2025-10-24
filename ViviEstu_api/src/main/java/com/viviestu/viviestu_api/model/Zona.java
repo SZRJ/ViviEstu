@@ -16,6 +16,7 @@ public class Zona {
     private Double precioPromedio;
     private String seguridad; // ej "alta", "media", "baja"
     private String transporteDisponible; // ej "bus, carro, caminar"
+    private Boolean recomendado; // ej "true" = Recomendado, "flase" = Recomendar
 
     public Zona() {}
 
@@ -34,4 +35,12 @@ public class Zona {
 
     public String getTransporteDisponible() { return transporteDisponible; }
     public void setTransporteDisponible(String transporteDisponible) { this.transporteDisponible = transporteDisponible; }
+
+    public Boolean getRecomendado() {
+        return recomendado;
+    }
+
+    public void setRecomendado(Boolean recomendado) {
+        this.recomendado = recomendado;
+    }
 }
