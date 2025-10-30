@@ -1,6 +1,7 @@
 package com.viviestu.viviestu_api.service;
 
 import com.viviestu.viviestu_api.dto.ZonaComentarioDTO;
+import com.viviestu.viviestu_api.dto.ZonaReporteDTO;
 import com.viviestu.viviestu_api.model.Zona;
 import com.viviestu.viviestu_api.repository.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,20 @@ public class ZonaService {
             lista.add(dto);
         }
         return lista;
+    }
+    public List<ZonaReporteDTO> listarZonasQueCumplen(Long idUsuario) {
+        List<Object[]> filas = zonaRep.listarZonasQueCumplen(idUsuario);
+        List<ZonaReporteDTO> out = new ArrayList<>();
+
+        for (Object[] f : filas) {
+            ZonaReporteDTO dto = new ZonaReporteDTO();
+            dto.setIdZona(((Number) f[0]).intValue());
+            dto.setNombre((String) f[1]);
+            dto.setPrecioPromedio(f[2] != null ? ((Number) f[2]).doubleValue() : null);
+            dto.setSeguridad((String) f[3]);
+            out.add(dto);
+        }
+        return out;
     }
 
 

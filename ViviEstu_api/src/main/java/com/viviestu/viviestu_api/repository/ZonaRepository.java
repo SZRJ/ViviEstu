@@ -3,6 +3,7 @@ package com.viviestu.viviestu_api.repository;
 import com.viviestu.viviestu_api.model.Zona;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -29,5 +30,27 @@ public interface ZonaRepository extends JpaRepository<Zona, Integer> {
             " GROUP BY z.id_zona, z.nombre, co.comentario, co.fecha\n" +
             " ORDER BY z.id_zona ASC, co.fecha ASC ", nativeQuery = true)
     List<Object[]> obtenerPromediosYComentarios();
+
+    @Query(value = """
+    SELECT DISTINCT
+        z.id_zona,
+        z.nombre,
+        z.precio_promedio,
+        z.seguridad
+    FROM zonas z
+    WHERE
+        LOWER(z.seguridad) IN ('media','alta')
+        AND EXISTS (
+            SELECT 1
+            FROM preferencias p
+            WHERE p.id_usuario = :idUsuario
+              AND p.universidad IS NOT NULL
+              AND p.presupuesto IS NOT NULL
+              AND z.precio_promedio <= p.presupuesto
+        )
+    ORDER BY z.nombre ASC
+    """, nativeQuery = true)
+    List<Object[]> listarZonasQueCumplen(@Param("idUsuario") Long idUsuario);
+
 
 }
