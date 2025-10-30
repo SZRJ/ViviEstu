@@ -3,6 +3,7 @@ package com.viviestu.viviestu_api.controller;
 import com.viviestu.viviestu_api.dto.RecomendarDTO;
 import com.viviestu.viviestu_api.dto.ZonaComentarioDTO;
 import com.viviestu.viviestu_api.dto.ZonaInsertDTO;
+import com.viviestu.viviestu_api.dto.ZonaReporteDTO;
 import com.viviestu.viviestu_api.model.Zona;
 import com.viviestu.viviestu_api.service.ZonaService;
 import org.modelmapper.ModelMapper;
@@ -44,6 +45,15 @@ public class ZonasController {
         List<ZonaComentarioDTO> lista = zonaService.obtenerPromediosYComentarios();
         return ResponseEntity.ok(lista);
     }
+
+    @GetMapping("/recomendadas")
+    public ResponseEntity<?> listarRecomendadasPorPreferencias(
+            @RequestParam Long idUsuario) {
+
+        List<ZonaReporteDTO> zonas = zonaService.listarZonasQueCumplen(idUsuario);
+        return ResponseEntity.ok(zonas);
+    }
+
 
     @PostMapping("/insertar")
     public ResponseEntity<String> insertar(@RequestBody ZonaInsertDTO dto) {
