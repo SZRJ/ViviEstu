@@ -21,11 +21,10 @@ public class ZonaService {
     public void edit(Zona z) {
         zonaRep.save(z);
     }
-
+    public void insert(Zona z) { zonaRep.save(z); }
     public List<ZonaComentarioDTO> obtenerPromediosYComentarios() {
         List<Object[]> resultados = zonaRep.obtenerPromediosYComentarios();
         List<ZonaComentarioDTO> lista = new ArrayList<>();
-
         for (Object[] fila : resultados) {
             ZonaComentarioDTO dto = new ZonaComentarioDTO();
             dto.setIdZona(((Number) fila[0]).intValue());
@@ -37,8 +36,8 @@ public class ZonaService {
             dto.setFecha(fila[4] != null ? ((Timestamp) fila[4]).toLocalDateTime() : null);
             lista.add(dto);
         }
-
         return lista;
     }
+
 
 }
