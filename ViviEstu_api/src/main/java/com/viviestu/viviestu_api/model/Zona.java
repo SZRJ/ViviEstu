@@ -2,25 +2,34 @@ package com.viviestu.viviestu_api.model;
 
 import jakarta.persistence.*;
 
+/// Entidad que representa las zonas registradas en el sistema.
 @Entity
 @Table(name = "zonas")
 public class Zona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_zona")
     private Integer idZona;
 
     @Column(nullable = false)
     private String nombre;
 
+    @Column(name = "precio_promedio")
     private Double precioPromedio;
-    private String seguridad; // ej "alta", "media", "baja"
-    private String transporteDisponible; // ej "bus, carro, caminar"
-    private Boolean recomendado; // ej "true" = Recomendado, "flase" = Recomendar
+
+    @Column
+    private String seguridad; // alta, media, baja
+
+    @Column(name = "transporte_disponible")
+    private String transporteDisponible; // bus, metro, etc.
+
+    @Column
+    private Boolean recomendado = false;
 
     public Zona() {}
 
-    // Getters / Setters
+    /// Getters y setters
     public Integer getIdZona() { return idZona; }
     public void setIdZona(Integer idZona) { this.idZona = idZona; }
 
@@ -36,11 +45,6 @@ public class Zona {
     public String getTransporteDisponible() { return transporteDisponible; }
     public void setTransporteDisponible(String transporteDisponible) { this.transporteDisponible = transporteDisponible; }
 
-    public Boolean getRecomendado() {
-        return recomendado;
-    }
-
-    public void setRecomendado(Boolean recomendado) {
-        this.recomendado = recomendado;
-    }
+    public Boolean getRecomendado() { return recomendado; }
+    public void setRecomendado(Boolean recomendado) { this.recomendado = recomendado; }
 }

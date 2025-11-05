@@ -1,9 +1,9 @@
 package com.viviestu.viviestu_api.service;
 
-import com.viviestu.viviestu_api.dto.NotificacionDTO;
-import com.viviestu.viviestu_api.model.Usuario;
+import com.viviestu.viviestu_api.dto.response.NotificacionResponse;
+import com.viviestu.viviestu_api.model.Preferencia;
 import com.viviestu.viviestu_api.model.Zona;
-import com.viviestu.viviestu_api.repository.UsuarioRepository;
+import com.viviestu.viviestu_api.repository.PreferenciaRepository;
 import com.viviestu.viviestu_api.repository.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,68 +11,77 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/// Servicio que genera recomendaciones de zonas según las preferencias del usuario
 @Service
 public class RecomendacionService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private PreferenciaRepository preferenciaRepository;
 
     @Autowired
     private ZonaRepository zonaRepository;
 
-    /**
-     * Genera una lista simple de "notificaciones" / recomendaciones basada en universidad, presupuesto y transporte.
-     * Algoritmo simple:
-     *  - Buscar zonas con precio <= presupuesto
-     *  - Priorizar zonas que contengan el transporte del usuario
-     *  - Retornar top N (por defecto 5)
-     */
-    public List<NotificacionDTO> generarRecomendacionesParaUsuario(Integer usuarioId, int topN) {
-        Optional<Usuario> uOpt = usuarioRepository.findById(usuarioId);
-        if (!uOpt.isPresent()) return Collections.emptyList();
+    /// Genera una lista de recomendaciones personalizadas
+    public List<NotificacionResponse> generarRecomendacionesParaUsuario(Long idUsuario, int topN) {
 
-        Usuario u = uOpt.get();
-        // Requisitos mínimos: universidad y presupuesto (RN-18)
-        if (u.getUniversidad() == null || u.getUniversidad().trim().isEmpty() || u.getPresupuesto() == null) {
-            return Collections.emptyList();
+        // RN-17: Verificar que el usuario tenga preferencias registradas
+        List<Preferencia> preferencias = preferenciaRepository.findByUsuarioIdUsuario(idUsuario);
+        if (preferencias.isEmpty()) {
+            throw new IllegalArgumentException("El usuario no tiene preferencias registradas.");
         }
 
-        Double presupuesto = u.getPresupuesto();
-        String transporte = u.getTransporte() == null ? "" : u.getTransporte().toLowerCase().trim();
+        // Tomamos la primera preferencia activa (simplificación)
+        Preferencia pref = preferencias.get(0);
 
-        // 1) Zonas con precio <= presupuesto
-        List<Zona> porPrecio = zonaRepository.findByPrecioPromedioLessThanEqual(presupuesto);
+        Float presupuesto = pref.getPresupuesto();
+        String transporte = pref.getTransporte().toLowerCase();
+        String seguridad = pref.getSeguridad().toLowerCase();
 
-        // 2) Si no hay resultados, tomar zonas cercanas por seguridad o transporte (fallback)
-        if (porPrecio.isEmpty()) {
-            porPrecio = zonaRepository.findAll();
+        // RN-18: Buscar zonas que cumplan presupuesto
+        List<Zona> zonas = zonaRepository.findByPrecioPromedioLessThanEqual(Double.valueOf(presupuesto));
+
+        if (zonas.isEmpty()) {
+            zonas = zonaRepository.findAll();
         }
 
-        // 3) Construir lista con prioridad: contiene transporte -> motivo "coincide transporte", else "ajusta a presupuesto" o "recomendado"
-        List<NotificacionDTO> result = new ArrayList<>();
-        for (Zona z : porPrecio) {
-            NotificacionDTO n = new NotificacionDTO();
-            n.setZonaId(z.getIdZona());
-            n.setZonaNombre(z.getNombre());
-            n.setPrecioPromedio(z.getPrecioPromedio());
-            String motivo = "Ajuste a tu presupuesto";
-
-            if (!transporte.isEmpty() && z.getTransporteDisponible() != null && z.getTransporteDisponible().toLowerCase().contains(transporte)) {
-                motivo = "Buena conexión con tu medio de transporte: " + transporte;
-            } else if (z.getSeguridad() != null && z.getSeguridad().toLowerCase().contains("alta")) {
-                motivo = "Zona con seguridad alta";
-            }
-            n.setMotivo(motivo);
-            result.add(n);
-        }
-
-        // Orden simple: priorizar coincidencias por transporte, luego precio ascendente
-        List<NotificacionDTO> sorted = result.stream()
-                .sorted(Comparator.comparing((NotificacionDTO nd) -> !nd.getMotivo().toLowerCase().contains("conexión"))
-                        .thenComparing(NotificacionDTO::getPrecioPromedio))
+        // Filtrado adicional (seguridad o transporte)
+        List<Zona> filtradas = zonas.stream()
+                .filter(z -> z.getSeguridad() != null && z.getSeguridad().toLowerCase().contains(seguridad)
+                        || (z.getTransporteDisponible() != null
+                        && z.getTransporteDisponible().toLowerCase().contains(transporte)))
                 .collect(Collectors.toList());
 
-        if (topN <= 0) topN = 5;
-        return sorted.stream().limit(topN).collect(Collectors.toList());
+        if (filtradas.isEmpty()) filtradas = zonas; // RN-20 fallback
+
+        // Construir lista de recomendaciones
+        List<NotificacionResponse> notificaciones = filtradas.stream()
+                .map(z -> {
+                    String motivo;
+                    if (z.getTransporteDisponible() != null &&
+                            z.getTransporteDisponible().toLowerCase().contains(transporte)) {
+                        motivo = "Buena conexión con tu medio de transporte: " + transporte;
+                    } else if (z.getSeguridad() != null && z.getSeguridad().toLowerCase().contains("alta")) {
+                        motivo = "Zona con alta seguridad";
+                    } else {
+                        motivo = "Ajuste a tu presupuesto y preferencias";
+                    }
+
+                    return new NotificacionResponse(
+                            z.getIdZona(),
+                            z.getNombre(),
+                            motivo,
+                            z.getPrecioPromedio()
+                    );
+                }).collect(Collectors.toList());
+
+        // RN-19: Priorizar seguridad y transporte
+        notificaciones = notificaciones.stream()
+                .sorted(Comparator
+                        .comparing((NotificacionResponse n) -> !n.motivo().toLowerCase().contains("transporte"))
+                        .thenComparing(NotificacionResponse::precioPromedio))
+                .limit(topN > 0 ? topN : 5)
+                .collect(Collectors.toList());
+
+        return notificaciones;
     }
 }

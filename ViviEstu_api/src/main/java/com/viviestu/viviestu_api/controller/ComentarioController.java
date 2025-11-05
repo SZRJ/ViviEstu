@@ -1,6 +1,5 @@
 package com.viviestu.viviestu_api.controller;
 
-import com.viviestu.viviestu_api.dto.ComentarioRequest;
 import com.viviestu.viviestu_api.model.Comentario;
 import com.viviestu.viviestu_api.service.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/zonas")
-public class ComentariosController {
+public class ComentarioController {
 
     @Autowired
     private ComentarioService comentarioService;
