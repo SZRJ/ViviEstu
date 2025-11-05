@@ -140,4 +140,21 @@ public class ZonaService {
                         z.getSeguridad(), z.getTransporteDisponible(), z.getRecomendado()))
                 .toList();
     }
+    /**
+     * Obtiene una Zona y la convierte a ZonaResponse
+     * (NECESARIO PARA US05)
+     */
+    public ZonaResponse obtenerZonaPorId(Integer idZona) {
+        Zona z = zonaRepository.findById(idZona)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Zona no encontrada con ID: " + idZona));
+
+        return new ZonaResponse(
+                z.getIdZona(),
+                z.getNombre(),
+                z.getPrecioPromedio(),
+                z.getSeguridad(),
+                z.getTransporteDisponible(),
+                z.getRecomendado()
+        );
+    }
 }

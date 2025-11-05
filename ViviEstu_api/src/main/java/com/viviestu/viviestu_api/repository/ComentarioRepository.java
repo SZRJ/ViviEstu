@@ -9,6 +9,9 @@ import java.util.List;
 /// Repositorio para gestionar comentarios
 public interface ComentarioRepository extends JpaRepository<Comentario, Integer> {
 
+    // Añade esta línea
+    long countByUsuarioIdUsuario(Long idUsuario);
+
     /// Devuelve los comentarios de una zona ordenados por fecha descendente (más recientes primero)
     List<Comentario> findByZonaIdZonaOrderByFechaDesc(Integer idZona);
 

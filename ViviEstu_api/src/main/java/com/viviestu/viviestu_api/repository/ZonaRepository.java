@@ -16,22 +16,30 @@ public interface ZonaRepository extends JpaRepository<Zona, Integer>, JpaSpecifi
     List<Zona> findByTransporteDisponibleContainingIgnoreCase(String transporte);
     List<Zona> findByPrecioPromedioLessThanEqual(Double precioMax);
 
-    /// Consulta nativa que combina promedio de calificaciones y comentarios recientes
+    /*
+     * ESTA ES LA CONSULTA CORREGIDA (Usa ROW_NUMBER() para obtener el último comentario)
+     * Reemplaza la consulta nativa "obtenerPromediosYComentarios" con esta.
+     */
     @Query(value = """
+        WITH UltimoComentario AS (
+            SELECT 
+                c.id_zona, c.comentario, c.fecha,
+                ROW_NUMBER() OVER(PARTITION BY c.id_zona ORDER BY c.fecha DESC) as rn
+            FROM comentarios c
+        )
         SELECT 
             z.id_zona,
             z.nombre AS nombre_zona,
             AVG(ca.puntuacion) AS promedio_calificacion,
-            co.comentario,
-            co.fecha
+            uc.comentario,
+            uc.fecha
         FROM zonas z
         LEFT JOIN calificaciones ca ON ca.id_zona = z.id_zona
-        LEFT JOIN comentarios co ON co.id_zona = z.id_zona
-        GROUP BY z.id_zona, z.nombre, co.comentario, co.fecha
-        ORDER BY z.id_zona ASC, co.fecha ASC
+        LEFT JOIN UltimoComentario uc ON uc.id_zona = z.id_zona AND uc.rn = 1
+        GROUP BY z.id_zona, z.nombre, uc.comentario, uc.fecha
+        ORDER BY z.id_zona ASC
     """, nativeQuery = true)
     List<Object[]> obtenerPromediosYComentarios();
-
     /// Lista zonas recomendadas según preferencias del usuario
     @Query(value = """
         SELECT DISTINCT

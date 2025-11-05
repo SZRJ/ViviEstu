@@ -9,6 +9,9 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Inte
     /// Verifica si el usuario ya calificó la zona
     boolean existsByUsuarioIdUsuarioAndZonaIdZona(Long idUsuario, Integer idZona);
 
+    // Añade esta línea
+    long countByUsuarioIdUsuario(Long idUsuario);
+
     /// Busca una calificación existente por usuario y zona
     Calificacion findByUsuarioIdUsuarioAndZonaIdZona(Long idUsuario, Integer idZona);
 

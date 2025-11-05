@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
+import java.time.LocalDate;
 
 /// Entidad Usuario: representa la tabla usuarios
 @Entity
@@ -22,7 +23,7 @@ public class Usuario {
     private String nombreUsuario;
 
     @Column(name = "fecha_nacimiento")
-    private String fechaNacimiento;
+    private LocalDate fechaNacimiento; // <-- Cambiar de String a LocalDate
 
     @Column(name = "correo", nullable = false, unique = true)
     private String correo;
@@ -52,8 +53,10 @@ public class Usuario {
     public String getNombreUsuario() { return nombreUsuario; }
     public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
 
-    public String getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(String fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public LocalDate getFechaNacimiento() { return fechaNacimiento;
+    }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento;
+    }
 
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }

@@ -25,9 +25,12 @@ public class ResumenService {
     public ResumenResponse obtenerResumen(Long idUsuario) {
         List<Favorito> favoritos = favoritoRepository.findByUsuarioIdUsuario(idUsuario);
 
-        // NOTA: Estas son simplificaciones. Deberías filtrar por idUsuario en tus repositorios.
-        long totalCalificaciones = calificacionRepository.count(); // (Mejorar para contar por usuario)
-        long totalComentarios = comentarioRepository.count(); // (Mejorar para contar por usuario)
+        // === LÍNEAS CORREGIDAS ===
+        long totalCalificaciones = calificacionRepository.countByUsuarioIdUsuario(idUsuario);
+        long totalComentarios = comentarioRepository.countByUsuarioIdUsuario(idUsuario);
+        // =========================
+
+        // (Mejorar para contar por usuario) // ¡Ya lo mejoramos!
 
         // RN-20: Validar si hay acciones
         if (favoritos.isEmpty() && totalCalificaciones == 0 && totalComentarios == 0) {
@@ -40,8 +43,8 @@ public class ResumenService {
 
         return new ResumenResponse(
                 favoritos.size(),
-                (int) totalCalificaciones, // Simplificación
-                (int) totalComentarios, // Simplificación
+                (int) totalCalificaciones, // Corrección
+                (int) totalComentarios, // Corrección
                 nombresZonas
         );
     }

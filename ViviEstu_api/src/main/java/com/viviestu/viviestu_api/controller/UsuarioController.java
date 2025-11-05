@@ -35,11 +35,13 @@ public class UsuarioController {
     /// GET /api/usuarios/{id}
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UsuarioResponse>> obtenerPorId(@PathVariable Long id) {
-        return usuarioService.obtenerPorId(id)
+        // Llama al método que devuelve un Optional
+        return usuarioService.obtenerPorIdOptional(id)
                 .map(u -> {
-                    Usuario us = u.getBody();
-                    UsuarioResponse resp = new UsuarioResponse(us.getIdUsuario(), us.getNombre(), us.getNombreUsuario(),
-                            us.getFechaNacimiento(), us.getCorreo(), us.isVerificado(), us.isActivo());
+                    // Ahora 'u' es un Usuario, no un ResponseEntity
+                    UsuarioResponse resp = new
+                            UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getNombreUsuario(),
+                            u.getFechaNacimiento(), u.getCorreo(), u.isVerificado(), u.isActivo());
                     return ResponseEntity.ok(new ApiResponse<>(200, "Usuario encontrado", resp));
                 })
                 .orElse(ResponseEntity.status(404).body(new ApiResponse<>(404, "Usuario no encontrado", null)));

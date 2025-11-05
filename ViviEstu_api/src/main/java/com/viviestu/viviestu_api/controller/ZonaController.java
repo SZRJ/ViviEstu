@@ -43,6 +43,12 @@ public class ZonaController {
         List<ZonaResponse> zonas = zonaService.listarZonas();
         return ResponseEntity.ok(new ApiResponse<>(200, "Lista de zonas", zonas));
     }
+    /// GET /api/zonas/{id} (Implementación de US05)
+    @GetMapping("/{idZona}")
+    public ResponseEntity<ApiResponse<ZonaResponse>> obtenerPorId(@PathVariable Integer idZona) {
+        ZonaResponse zona = zonaService.obtenerZonaPorId(idZona);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Zona obtenida", zona));
+    }
 
     /// PUT /api/zonas/recomendacion (marcar o desmarcar)
     @PutMapping("/recomendacion")
