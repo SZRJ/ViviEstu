@@ -5,8 +5,13 @@ import com.viviestu.viviestu_api.dto.response.UsuarioResponse;
 import com.viviestu.viviestu_api.model.Usuario;
 import com.viviestu.viviestu_api.service.UsuarioService;
 import com.viviestu.viviestu_api.util.ApiResponse;
+import com.viviestu.viviestu_api.security.JwtUtil;
+import com.viviestu.viviestu_api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +25,15 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     /// GET /api/usuarios
     @GetMapping
@@ -58,11 +72,33 @@ public class UsuarioController {
 
     /// POST /api/usuarios/login  (RN-02: sólo usuarios verificados pueden iniciar sesión)
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UsuarioResponse>> login(@RequestBody LoginRequest req) {
-        Usuario u = usuarioService.loginPorCorreo(req.correo(), req.contrasena());
+    public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest req) {
+        try {
+            // 1. Autenticar con Spring Security (usará UserDetailsServiceImpl y PasswordEncoder)
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(req.correo(), req.contrasena())
+            );
+        } catch (Exception e) {
+            // Si falla (malas credenciales, no verificado, inactivo)
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse<>(401, "Error de autenticación: " + e.getMessage(), null));
+        }
+
+        // 2. Si la autenticación fue exitosa, generar el token
+        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(req.correo());
+        final String jwt = jwtUtil.generateToken(userDetails);
+
+        // 3. (Opcional) Devolver también los datos del usuario
+        Usuario u = usuarioService.obtenerPorNombreUsuario(userDetails.getUsername()); // O usa findByCorreo
         UsuarioResponse resp = new UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getNombreUsuario(),
                 u.getFechaNacimiento(), u.getCorreo(), u.isVerificado(), u.isActivo());
-        return ResponseEntity.ok(new ApiResponse<>(200, "Login exitoso", resp));
+
+        // DTO de respuesta anidado para el token
+        record LoginResponse(String token, UsuarioResponse usuario) {}
+
+        return ResponseEntity.ok(new ApiResponse<>(200, "Login exitoso",
+                new LoginResponse(jwt, resp)
+        ));
     }
 
     /// PUT /api/usuarios/{id}/perfil   (actualiza perfil, valida RN-03 y RN-04 donde aplique)
