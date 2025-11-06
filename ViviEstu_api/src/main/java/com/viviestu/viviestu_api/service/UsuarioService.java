@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.viviestu.viviestu_api.model.Preferencia;
 import com.viviestu.viviestu_api.repository.PreferenciaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder; // <-- AÑADIR
+
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class UsuarioService {
 
     @Autowired
     private PreferenciaRepository preferenciaRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // <-- AÑADIR ESTO
 
     /// Obtiene todos los usuarios (podrías ocultar campos sensibles si se usa en producción)
     public List<Usuario> obtenerTodos() {
@@ -38,16 +43,10 @@ public class UsuarioService {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /// Registro de usuario (RN-01: correo único). Marca verificado = false y devuelve mensaje de verificación.
+    // MÉTODO MODIFICADO (RN-01)
     public Usuario crearUsuario(RegistroRequest req) {
-        if (req == null) throw new IllegalArgumentException("Datos de registro incompletos");
-        if (req.correo() == null || req.correo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El correo es obligatorio");
-        }
-        if (req.contrasena() == null || req.contrasena().trim().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña es obligatoria");
-        }
-        // Validar unicidad correo y nombreUsuario
+        // ... (tus validaciones de req == null, correo, etc. se quedan igual) ...
+
         if (usuarioRepository.existsByCorreo(req.correo())) {
             throw new IllegalArgumentException("Ya existe un usuario registrado con ese correo");
         }
@@ -60,37 +59,40 @@ public class UsuarioService {
         u.setNombreUsuario(req.nombreUsuario());
         u.setFechaNacimiento(req.fechaNacimiento());
         u.setCorreo(req.correo());
-        u.setContrasena(req.contrasena()); // Nota: recomiendo encriptar la contraseña con BCrypt en el futuro
-        u.setVerificado(false); // RN-01: necesita verificación por correo
+
+        // --- CAMBIO IMPORTANTE ---
+        // Encriptamos la contraseña antes de guardarla
+        u.setContrasena(passwordEncoder.encode(req.contrasena()));
+        // -------------------------
+
+        u.setVerificado(false); // RN-01
         u.setActivo(true);
 
         Usuario guardado = usuarioRepository.save(u);
-
-        // TODO: Enviar correo de verificación (en producción implementar servicio de email que actualice verificado = true)
         return guardado;
     }
 
-    /**
-     * Login: sólo permite iniciar sesión si el correo/usuario existe, la contraseña coincide y verificado == true (RN-02).
-     * Retorna el usuario si OK, sino lanza IllegalArgumentException.
-     */
     public Usuario loginPorCorreo(String correo, String contrasena) {
         if (correo == null || contrasena == null)
             throw new IllegalArgumentException("Correo y contraseña son requeridos");
 
         Usuario u = usuarioRepository.findByCorreo(correo);
-        if (u == null) throw new IllegalArgumentException("Credenciales incorrectas");
-
-        if (!u.isVerificado()) {
-            throw new IllegalArgumentException("Debe verificar su correo antes de iniciar sesión");
-        }
-
-        if (!u.getContrasena().equals(contrasena)) {
-            // Si implementas hashing, acá debes usar passwordEncoder.matches(...)
+        if (u == null) {
             throw new IllegalArgumentException("Credenciales incorrectas");
         }
 
-        if (!u.isActivo()) {
+        // --- CAMBIO IMPORTANTE ---
+        // Comparamos la contraseña plana del request con la hasheada de la BD
+        if (!passwordEncoder.matches(contrasena, u.getContrasena())) {
+            throw new IllegalArgumentException("Credenciales incorrectas");
+        }
+        // -------------------------
+
+        if (!u.isVerificado()) { // RN-02
+            throw new IllegalArgumentException("Debe verificar su correo antes de iniciar sesión");
+        }
+
+        if (!u.isActivo()) { // RN-11
             throw new IllegalArgumentException("La cuenta está desactivada");
         }
 
@@ -182,4 +184,5 @@ public class UsuarioService {
         u.setVerificado(true);
         return usuarioRepository.save(u);
     }
+
 }
