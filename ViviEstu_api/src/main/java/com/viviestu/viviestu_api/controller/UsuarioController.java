@@ -56,7 +56,7 @@ public class UsuarioController {
         return ResponseEntity.status(201).body(new ApiResponse<>(201, "Usuario registrado. Verifique su correo.", resp));
     }
 
-    /// POST /api/usuarios/login  (RN-02: sólo usuarios verificados pueden iniciar sesión)
+    /// POST /api/usuarios/login  (RN-02: sólo usuarios verificados pueden miniciar sesión)
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<UsuarioResponse>> login(@RequestBody LoginRequest req) {
         Usuario u = usuarioService.loginPorCorreo(req.correo(), req.contrasena());
