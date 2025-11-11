@@ -73,10 +73,11 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**"
-                        ).hasRole("ADMIN")
+                        ).permitAll()
                         //permitir logearse o registrase sin token
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/registro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+
 
                         // Permitir ver zonas públicas sin loguearse (GET)
                         .requestMatchers(HttpMethod.GET, "/api/zonas", "/api/zonas/{idZona}").permitAll()
@@ -89,6 +90,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/notificaciones/{idUsuario}").authenticated()
                         .requestMatchers("/api/zonas/{idZona}/calificaciones").authenticated()
                         .requestMatchers("/api/zonas/{id}/comentarios").authenticated()
+
+                        //Admin endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/zonas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/preferencias").hasRole("ADMIN")
+
 
                         // Asegurar el resto
                         .anyRequest().authenticated()
