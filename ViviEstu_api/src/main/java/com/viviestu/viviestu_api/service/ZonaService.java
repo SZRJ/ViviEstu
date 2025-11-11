@@ -16,6 +16,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /// Servicio para la lógica de negocio del módulo Zona
 @Service
@@ -96,33 +100,105 @@ public class ZonaService {
     public Optional<Zona> obtenerPorId(Integer idZona) {
         return zonaRepository.findById(idZona);
     }
-    /// Implementación de RN-10 (Filtro manual)
+
+    /**
+     * Implementación de RN-10 (Filtro).
+     * Usa JPA Specification para filtros básicos y Stream/Reflection para filtros complejos (Distancia, Orden).
+     */
     public List<ZonaResponse> filtrarZonas(FiltroRequest req) {
 
+        // 1. Crear la especificación de JPA para filtros básicos (Nombre, Precio, Seguridad, Transporte)
         Specification<Zona> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (req.precioMax() != null && req.precioMax() > 0) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("precioPromedio"), req.precioMax()));
+            // Filtro por precio MÍNIMO (agregado de la versión antigua)
+            if (req.minPrecio() != null && req.minPrecio() >= 0) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("precioPromedio"), req.minPrecio()));
             }
+            // Filtro por precio MÁXIMO (ya existía)
+            if (req.maxPrecio() != null && req.maxPrecio() > 0) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("precioPromedio"), req.maxPrecio()));
+            }
+            // Filtro por seguridad (ya existía)
             if (req.seguridad() != null && !req.seguridad().trim().isEmpty()) {
                 predicates.add(cb.equal(root.get("seguridad"), req.seguridad()));
             }
+            // Filtro por transporte (ya existía)
             if (req.transporte() != null && !req.transporte().trim().isEmpty()) {
                 predicates.add(cb.like(root.get("transporteDisponible"), "%" + req.transporte() + "%"));
             }
+            // Filtro por nombre (ya existía)
             if (req.nombre() != null && !req.nombre().trim().isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("nombre")), "%" + req.nombre().toLowerCase() + "%"));
             }
+            // Nota: Las fechas (fechaInicio, fechaFin) no se filtran aquí ya que requieren un modelo de disponibilidad/reserva
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        return zonaRepository.findAll(spec).stream()
+        // 2. Ejecutar la consulta con la Specification
+        List<Zona> zonasFiltradas = zonaRepository.findAll(spec);
+
+        // 3. Filtrado y Ordenamiento Post-consulta (Lógica de Distancia)
+        boolean ordenarPorDistancia = req.ordenarPorDistancia() != null && req.ordenarPorDistancia();
+        boolean necesitaFiltroDistancia = req.maxDistancia() != null;
+
+        // 3a. Filtrar por Distancia si es necesario (usa Reflection como la versión antigua)
+        if (necesitaFiltroDistancia) {
+            zonasFiltradas = zonasFiltradas.stream()
+                    .filter(z -> {
+                        try {
+                            // Intentar obtener el método getDistancia()
+                            Method m = z.getClass().getMethod("getDistancia");
+                            Object val = m.invoke(z);
+                            if (val instanceof Number) {
+                                double dist = ((Number) val).doubleValue();
+                                return dist <= req.maxDistancia(); // Mantener si está dentro del maxDistancia
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+                            // Si no hay método o error, no filtramos por distancia para esta zona
+                        }
+                        // Si el filtro está activado pero no se pudo obtener la distancia, se excluye
+                        return false;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // 3b. Ordenamiento
+        if (ordenarPorDistancia) {
+            try {
+                // Intentar ordenar por getDistancia()
+                zonasFiltradas.sort(Comparator.comparingDouble(z -> {
+                    try {
+                        Method m = z.getClass().getMethod("getDistancia");
+                        Object val = m.invoke(z);
+                        if (val instanceof Number) return ((Number) val).doubleValue();
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+                        // Si no tiene getDistancia(), se le da un valor máximo para ir al final
+                    }
+                    return Double.MAX_VALUE;
+                }));
+            } catch (Exception e) {
+                // Si falla el ordenamiento por distancia, se ordena por precio
+                ordenarPorPrecio(zonasFiltradas);
+            }
+        } else {
+            // Si no se pide ordenar por distancia, ordenar por precio ascendente por defecto
+            ordenarPorPrecio(zonasFiltradas);
+        }
+
+        // 4. Mapear a ZonaResponse
+        return zonasFiltradas.stream()
                 .map(z -> new ZonaResponse(z.getIdZona(), z.getNombre(), z.getPrecioPromedio(),
                         z.getSeguridad(), z.getTransporteDisponible(), z.getRecomendado()))
                 .toList();
     }
+
+    /** Método auxiliar para ordenar por precio */
+    private void ordenarPorPrecio(List<Zona> zonas) {
+        zonas.sort(Comparator.comparing(z -> z.getPrecioPromedio() == null ? Double.MAX_VALUE : z.getPrecioPromedio()));
+    }
+
 
     // NUEVO MÉTODO (para US09)
     public List<ZonaResponse> listarZonasPorIds(List<Integer> ids) {
@@ -140,6 +216,7 @@ public class ZonaService {
                         z.getSeguridad(), z.getTransporteDisponible(), z.getRecomendado()))
                 .toList();
     }
+
     /**
      * Obtiene una Zona y la convierte a ZonaResponse
      * (NECESARIO PARA US05)

@@ -28,26 +28,29 @@ public class FavoritoService {
     @Autowired
     private ZonaRepository zonaRepository;
 
-    /// Agrega una zona a favoritos
-    public FavoritoResponse agregarFavorito(FavoritoRequest req) {
-        if (req == null || req.idUsuario() == null || req.idZona() == null)
-            throw new IllegalArgumentException("Datos incompletos para marcar favorito");
+    /// Agrega una zona a favoritos (Firma modificada para recibir dos IDs)
+    public FavoritoResponse agregarFavorito(Long usuarioId, Integer idZona) {
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(req.idUsuario());
-        if (usuarioOpt.isEmpty()) throw new IllegalArgumentException("Usuario no encontrado");
+        // 1. Verificar existencia de Usuario (Devuelve null para que el Controller lance 404)
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
+        if (usuarioOpt.isEmpty()) return null;
 
-        Optional<Zona> zonaOpt = zonaRepository.findById(req.idZona());
-        if (zonaOpt.isEmpty()) throw new IllegalArgumentException("Zona no encontrada");
+        // 2. Verificar existencia de Zona (Devuelve null para que el Controller lance 404)
+        Optional<Zona> zonaOpt = zonaRepository.findById(idZona);
+        if (zonaOpt.isEmpty()) return null;
 
-        if (favoritoRepository.existsByUsuarioIdUsuarioAndZonaIdZona(req.idUsuario(), req.idZona()))
+        // 3. Verificar duplicidad (Mantiene la excepción, es un error de negocio)
+        if (favoritoRepository.existsByUsuarioIdUsuarioAndZonaIdZona(usuarioId, idZona))
             throw new IllegalArgumentException("La zona ya está marcada como favorita");
 
+        // 4. Crear y guardar
         Favorito favorito = new Favorito();
         favorito.setUsuario(usuarioOpt.get());
         favorito.setZona(zonaOpt.get());
 
         Favorito guardado = favoritoRepository.save(favorito);
 
+        // 5. Mapear a Response DTO
         return new FavoritoResponse(
                 guardado.getIdFavorito(),
                 guardado.getUsuario().getIdUsuario(),

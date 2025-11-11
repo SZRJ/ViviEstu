@@ -81,6 +81,13 @@ public class SecurityConfig {
 
                         // Permitir ver zonas públicas sin loguearse (GET)
                         .requestMatchers(HttpMethod.GET, "/api/zonas", "/api/zonas/{idZona}").permitAll()
+                        // Otros GETs públicos relacionados con zonas/utilidades
+                        .requestMatchers(HttpMethod.GET, "/api/zonas/promedios-comentarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/zonas/{idZona}/calificaciones/promedio").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/zonas/filtrar").permitAll() // Filtrado no requiere auth
+                        .requestMatchers(HttpMethod.POST, "/api/zonas/comparar").permitAll() // Comparación no requiere auth
+                        .requestMatchers(HttpMethod.GET, "/api/transporte/tiempo").permitAll() // Transporte/Tiempo no requiere auth
+
 
 
 
@@ -90,11 +97,33 @@ public class SecurityConfig {
                         .requestMatchers("/api/notificaciones/{idUsuario}").authenticated()
                         .requestMatchers("/api/zonas/{idZona}/calificaciones").authenticated()
                         .requestMatchers("/api/zonas/{id}/comentarios").authenticated()
+                        .requestMatchers("/api/favoritos/{idUsuario}").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/favoritos/{usuarioId}").authenticated() // POST /api/favoritos/{usuarioId}
+                        .requestMatchers(HttpMethod.DELETE, "/api/favoritos/{idUsuario}/{idZona}").authenticated() // DELETE /api/favoritos/{idUsuario}/{idZona}
+
+                        // Endpoints de Preferencia (CRUD)
+                        .requestMatchers("/api/preferencias").authenticated() // POST /api/preferencias
+                        .requestMatchers("/api/preferencias/{idUsuario}").authenticated() // GET /api/preferencias/{idUsuario}
+                        .requestMatchers("/api/preferencias/{idPreferencia}").authenticated() // PUT, DELETE /api/preferencias/{idPreferencia}
+
+
+                        // Endpoints de Usuario (perfil, get, etc.)
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/{id}").authenticated() // GET /api/usuarios/{id}
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}/perfil").authenticated() // PUT /api/usuarios/{id}/perfil
+
+                        // Reportes y Resumen
+                        .requestMatchers(HttpMethod.GET, "/api/reportes/pdf/{idUsuario}").authenticated() // GET /api/reportes/pdf/{idUsuario}
+                        .requestMatchers(HttpMethod.GET, "/api/resumen/{idUsuario}").authenticated() // GET /api/resumen/{idUsuario}
+
+                        // Simulador
+                        .requestMatchers(HttpMethod.POST, "/api/simulador/gasto").authenticated() // POST /api/simulador/gasto
+
 
                         //Admin endpoints
                         .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/zonas").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/preferencias").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/zonas").hasRole("ADMIN") // Registrar nueva zona
+                        .requestMatchers(HttpMethod.PUT, "/api/zonas/recomendacion").hasRole("ADMIN") // Marcar recomendación
 
 
                         // Asegurar el resto

@@ -5,5 +5,6 @@ package com.viviestu.viviestu_api.dto.request;
 import java.util.List;
 
 public record CompararRequest(
+        Long usuarioId,
         List<Integer> zonaIds
 ) {}

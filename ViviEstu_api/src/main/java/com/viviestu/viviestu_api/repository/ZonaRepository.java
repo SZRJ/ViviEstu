@@ -60,6 +60,20 @@ public interface ZonaRepository extends JpaRepository<Zona, Integer>, JpaSpecifi
         ORDER BY z.nombre ASC
     """, nativeQuery = true)
     List<Object[]> listarZonasQueCumplen(@Param("idUsuario") Long idUsuario);
+    // Filtrado por nombre (contains, case-insensitive) y rango de precio (min/max).
+    // Parámetros nulos se ignoran (no filtran).
+    @Query(value = """
+        SELECT z.* FROM zonas z
+        WHERE (:zona IS NULL OR LOWER(z.nombre) LIKE '%' || LOWER(:zona) || '%')
+            AND (:minPrecio IS NULL OR z.precio_promedio >= :minPrecio)
+            AND (:maxPrecio IS NULL OR z.precio_promedio <= :maxPrecio)
+        ORDER BY z.precio_promedio ASC
+        """, nativeQuery = true)
+    List<com.viviestu.viviestu_api.model.Zona> filtrarPorNombreYPrecio(
+            @Param("zona") String zona,
+            @Param("minPrecio") Double minPrecio,
+            @Param("maxPrecio") Double maxPrecio
+    );
 
     // --- NUEVO CÓDIGO AÑADIDO (PARA US09) ---
     List<Zona> findByIdZonaIn(List<Integer> ids);

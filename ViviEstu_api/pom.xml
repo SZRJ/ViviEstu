@@ -97,14 +97,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- o MySQL -->
-        <!--
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        -->
+
 
         <!-- 🧪 Pruebas -->
         <dependency>
