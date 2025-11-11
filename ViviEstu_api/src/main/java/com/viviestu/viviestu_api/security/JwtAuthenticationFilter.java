@@ -1,7 +1,5 @@
 package com.viviestu.viviestu_api.security;
 
-
-import com.viviestu.viviestu_api.security.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,16 +24,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // 🔓 Rutas públicas que no deben pasar por validación JWT
+    private static final List<String> EXCLUDED_PATHS = List.of(
+            "/api/usuarios/registro",
+            "/api/usuarios/login",
+            "/api/usuarios/verificar",
+            "/v3/api-docs",
+            "/swagger-ui",
+            "/swagger-resources",
+            "/webjars"
+    );
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
+        String path = request.getRequestURI();
 
+        // ✅ Si la ruta es pública, no validamos el token
+        if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
 
-        // 1. Extrae el token del header "Bearer <token>"
+        // 1️⃣ Extrae el token si existe
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
@@ -44,23 +61,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 2. Si tenemos un usuario y no está autenticado en el contexto de seguridad...
+        // 2️⃣ Valida el token y configura el contexto de seguridad
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(username);
 
-            // 3. Si el token es válido, autenticamos al usuario para esta petición
             if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // 4. Guardamos la autenticación en el contexto
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // 5. Continuamos con la cadena de filtros
+        // 3️⃣ Continúa con el resto de filtros
         filterChain.doFilter(request, response);
     }
 }

@@ -14,6 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,31 +44,45 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder());
         return authBuilder.build();
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 🚨 Permite todo para pruebas. Para PROD, sé más específico.
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*")); // Permitir todas las cabeceras
+        configuration.setAllowCredentials(false); // No enviar cookies o certificados
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Aplica a todas las rutas
+        return source;
+    }
 
     // 3. Define las reglas de seguridad de los endpoints
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para APIs REST
-                .cors(cors -> {})
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 Usar el bean aquí
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos (No requieren token)
                         .requestMatchers(
-                                "/api/usuarios/registro",
-                                "/api/usuarios/login",
-                                "/api/usuarios/verificar/**"
-                        ).permitAll()
-
-                        // Permitir ver zonas públicas sin loguearse (GET)
-                        .requestMatchers(HttpMethod.GET, "/api/zonas", "/api/zonas/{idZona}").permitAll()
-
-                        // 🔸 Permitir acceso a Swagger UI y documentación
-                        .requestMatchers(
+                                "/api/usuarios/verificar/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        //permitir logearse o registrase sin token
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/registro").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+
+                        // Permitir ver zonas públicas sin loguearse (GET)
+                        .requestMatchers(HttpMethod.GET, "/api/zonas", "/api/zonas/{idZona}").permitAll()
+
+
+
 
                         // Endpoints protegidos
                         .requestMatchers("/api/usuarios/{id}/desactivar").authenticated()

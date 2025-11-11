@@ -168,6 +168,10 @@ public class UsuarioService {
     public Usuario obtenerPorNombreUsuario(String nombreUsuario) {
         return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
+    public Usuario obtenerPorCorreo(String correo) {
+
+        return usuarioRepository.findByCorreo(correo);
+    }
     /**
      * Implementación Faltante de RN-01 (Verificación)
      * Simula la verificación de cuenta. En un caso real, buscaría por token.

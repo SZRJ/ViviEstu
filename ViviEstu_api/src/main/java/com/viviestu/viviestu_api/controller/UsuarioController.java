@@ -89,7 +89,7 @@ public class UsuarioController {
         final String jwt = jwtUtil.generateToken(userDetails);
 
         // 3. (Opcional) Devolver también los datos del usuario
-        Usuario u = usuarioService.obtenerPorNombreUsuario(userDetails.getUsername()); // O usa findByCorreo
+        Usuario u = usuarioService.obtenerPorCorreo(req.correo()); // O usa findByCorreo
         UsuarioResponse resp = new UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getNombreUsuario(),
                 u.getFechaNacimiento(), u.getCorreo(), u.isVerificado(), u.isActivo());
 

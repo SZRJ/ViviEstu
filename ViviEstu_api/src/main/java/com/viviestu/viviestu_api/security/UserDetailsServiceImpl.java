@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.DisabledException;
 
 import java.util.ArrayList; // Para los roles, si los tuvieras
 
@@ -20,24 +21,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
-        // 1. Buscamos al usuario por correo (nuestro 'username')
         Usuario usuario = usuarioRepository.findByCorreo(correo);
 
         if (usuario == null) {
+            // ✅ OK: El usuario realmente no existe
             throw new UsernameNotFoundException("Usuario no encontrado con correo: " + correo);
         }
 
         // 2. Aplicamos las reglas de negocio del Login (RN-02 y RN-11)
         if (!usuario.isVerificado()) {
-            throw new UsernameNotFoundException("Usuario no verificado: " + correo);
+            // ✅ CORRECCIÓN: Lanza una excepción que Spring Security maneja mejor
+            throw new DisabledException("Debe verificar su cuenta antes de iniciar sesión.");
         }
         if (!usuario.isActivo()) {
-            throw new UsernameNotFoundException("Usuario desactivado: " + correo);
+            // ✅ CORRECCIÓN
+            throw new DisabledException("La cuenta se encuentra desactivada.");
         }
 
         // 3. Creamos el UserDetails de Spring
-        // (Usamos el correo como username y la contraseña HASHADA de la BD)
         return new User(usuario.getCorreo(), usuario.getContrasena(),
-                new ArrayList<>()); // Lista de roles/autoridades (vacía por ahora)
+                new ArrayList<>());
     }
 }

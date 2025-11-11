@@ -46,16 +46,27 @@ class CalificacionServiceTest {
         Long idUsuario = 1L;
         CalificacionRequest req = new CalificacionRequest(idUsuario, 4);
 
-        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(new Usuario()));
-        when(zonaRepository.findById(idZona)).thenReturn(Optional.of(new Zona()));
+        // Crear entidades simuladas
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(idUsuario);
+
+        Zona zona = new Zona();
+        zona.setIdZona(idZona);
+
+        // Configurar mocks
+        when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.of(usuario));
+        when(zonaRepository.findById(idZona)).thenReturn(Optional.of(zona));
 
         // Simular que ya existe una calificación
         Calificacion calificacionExistente = new Calificacion();
-        calificacionExistente.setPuntuacion(2); // Puntuación antigua
+        calificacionExistente.setUsuario(usuario);
+        calificacionExistente.setZona(zona);
+        calificacionExistente.setPuntuacion(2); // Puntuación anterior
+
         when(calificacionRepository.findByUsuarioIdUsuarioAndZonaIdZona(idUsuario, idZona))
                 .thenReturn(calificacionExistente);
 
-        // Mockear el save
+        // Mockear save
         when(calificacionRepository.save(any(Calificacion.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
