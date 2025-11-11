@@ -1,6 +1,6 @@
 package com.viviestu.viviestu_api.security;
 
-import com.viviestu.viviestu_api.service.security.UserDetailsServiceImpl;
+import com.viviestu.viviestu_api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,23 +47,34 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos (No requieren token)
-                        .requestMatchers("/api/usuarios/registro", "/api/usuarios/login", "/api/usuarios/verificar/**").permitAll()
+                        .requestMatchers(
+                                "/api/usuarios/registro",
+                                "/api/usuarios/login",
+                                "/api/usuarios/verificar/**"
+                        ).permitAll()
+
                         // Permitir ver zonas públicas sin loguearse (GET)
                         .requestMatchers(HttpMethod.GET, "/api/zonas", "/api/zonas/{idZona}").permitAll()
 
-                        // Endpoints Protegidos (Requieren token JWT)
-                        // US11
+                        // 🔸 Permitir acceso a Swagger UI y documentación
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        // Endpoints protegidos
                         .requestMatchers("/api/usuarios/{id}/desactivar").authenticated()
-                        // US12
                         .requestMatchers("/api/notificaciones/{idUsuario}").authenticated()
-                        // US13
                         .requestMatchers("/api/zonas/{idZona}/calificaciones").authenticated()
-                        // US14
                         .requestMatchers("/api/zonas/{id}/comentarios").authenticated()
 
-                        // Aseguramos el resto
+                        // Asegurar el resto
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session -> session
                         // Le decimos a Spring que no cree sesiones, usaremos JWT
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
