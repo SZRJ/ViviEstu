@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+
 import java.io.IOException;
 import java.util.List;
 
@@ -41,6 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
+        //testeo
+        System.out.println(">>> EJECUTANDO FILTRO JWT: " + request.getRequestURI());
+
         // ✅ Si la ruta es pública, no validamos el token
         if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
@@ -63,14 +67,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 2️⃣ Valida el token y configura el contexto de seguridad
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            try {
+                // La carga del usuario (y el chequeo de activo/verificado) ocurre aquí
+                UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(username);
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                // Si el usuario se carga, el log de roles debe aparecer
+                System.out.println(">>> ROLES LEÍDOS del usuario: " + userDetails.getAuthorities());
+
+                if (jwtUtil.validateToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    // ESTO DEBE FUNCIONAR
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception e) {
+                // 🚨 CRÍTICO: Capturamos la excepción (DisabledException/UsernameNotFoundException)
+                // Esto evita que el filtro falle y garantiza que la petición continúe SIN autenticación,
+                // permitiendo a Spring Security devolver 403/401 limpio.
+                logger.warn("Fallo al autenticar/cargar usuario: " + e.getMessage());
             }
         }
 

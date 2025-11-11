@@ -5,17 +5,27 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import javax.crypto.spec.SecretKeySpec; // 👈 Añadir
+import java.nio.charset.StandardCharsets; // 👈 Añadir
 
 @Component
 public class JwtUtil {
 
-    // ¡IMPORTANTE! Cambia esto por una clave secreta fuerte y guárdala en 'application.properties'
-    private String SECRET_KEY = "viviestu_secreto_muy_largo_y_seguro_para_produccion_2025";
+    private final String SECRET_KEY;
+    // 🟢 NUEVA VARIABLE: Almacena la clave codificada para la firma
+    private final SecretKeySpec signingKey;
+
+    // 2. 🟢 Constructor para inyectar la clave
+    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
+        this.SECRET_KEY = secretKey;
+        this.signingKey = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
+    }
 
     // Extrae el username (correo) del token
     public String extractUsername(String token) {
@@ -32,7 +42,8 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        // 🟢 CAMBIO: Usamos signingKey en lugar de SECRET_KEY (String)
+        return Jwts.parser().setSigningKey(signingKey).parseClaimsJws(token).getBody();
     }
 
     // Verifica si el token ha expirado
@@ -43,18 +54,17 @@ public class JwtUtil {
     // Genera un token para el usuario (UserDetails)
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        // (Aquí puedes añadir más 'claims' si los necesitas, ej. roles o ID)
         return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject) // Usamos el correo (username) como 'subject'
+                .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                // 10 horas de validez
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                // 🟢 CAMBIO: Usamos signingKey en lugar de SECRET_KEY (String)
+                .signWith(signingKey)
                 .compact();
     }
 

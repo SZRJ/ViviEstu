@@ -73,7 +73,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**"
-                        ).permitAll()
+                        ).hasRole("ADMIN")
                         //permitir logearse o registrase sin token
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/registro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()

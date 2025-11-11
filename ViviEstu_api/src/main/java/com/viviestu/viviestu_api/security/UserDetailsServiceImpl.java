@@ -10,6 +10,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+// 🟢 Añadir este import para el rol
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+// 🟢 Añadir este import para crear la lista
+import java.util.Collections;
+import java.util.List; // Este ya lo puedes teners
 
 import java.util.ArrayList; // Para los roles, si los tuvieras
 
@@ -38,8 +45,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new DisabledException("La cuenta se encuentra desactivada.");
         }
 
-        // 3. Creamos el UserDetails de Spring
-        return new User(usuario.getCorreo(), usuario.getContrasena(),
-                new ArrayList<>());
+        // 🟢 CÓDIGO CORREGIDO: Declaramos y llenamos la lista DE AUTORIDADES
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        // 🔑 LÓGICA TEMPORAL PARA ASIGNAR ROLE_ADMIN:
+        if (usuario.getIdUsuario() == 1) { // Suponemos que ID 1 es el Admin (Reze)
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
+        // 🟢 CÓDIGO CORREGIDO: Usamos el constructor de User con la lista de autoridades
+        return new User(usuario.getCorreo(), usuario.getContrasena(), authorities);
     }
 }
