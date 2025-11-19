@@ -1,0 +1,91 @@
+<div style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: Arial, Helvetica, sans-serif;">
+
+  <h1>Panel Principal (Zonas Recomendadas)</h1>
+
+  <h3>Bienvenido, Estudiante</h3>
+  <p>
+    Este es tu panel de control. Usa los filtros para encontrar tu zona de vivienda ideal.
+  </p>
+
+  <h2>Filtros de Búsqueda y Preferencias</h2>
+
+  <!-- Presupuesto -->
+  <div style="margin-bottom: 10px;">
+    <label>Presupuesto Máximo (Soles)</label><br />
+    <input type="number" [(ngModel)]="currentPreference.precioMax" style="width: 250px;" />
+  </div>
+
+  <!-- Tiempo máximo -->
+  <div style="margin-bottom: 10px;">
+    <label>Tiempo Máximo a la Universidad (minutos)</label><br />
+    <input type="number" [(ngModel)]="currentPreference.tiempoMax" style="width: 250px;" />
+  </div>
+
+  <!-- Nivel de seguridad -->
+  <div style="margin-bottom: 10px;">
+    <label>Nivel de Seguridad Preferido</label><br />
+    <select [(ngModel)]="currentPreference.nivelSeguridad" style="width: 250px;">
+      <option value="">Seleccione…</option>
+      <option value="Bajo">Bajo</option>
+      <option value="Medio">Medio</option>
+      <option value="Alto">Alto</option>
+    </select>
+  </div>
+
+  <!-- Transporte -->
+  <div style="margin-bottom: 10px;">
+    <label>Transporte Mínimo Requerido</label><br />
+    <select [(ngModel)]="currentPreference.transporte" style="width: 250px;">
+      <option value="">Seleccione…</option>
+      <option value="Bus">Autobús / Microbús</option>
+      <option value="Metro">Metro</option>
+      <option value="Taxi">Taxi</option>
+    </select>
+  </div>
+
+  <!-- Universidad -->
+  <div style="margin-bottom: 10px;">
+    <label>Universidad de Destino</label><br />
+    <select [(ngModel)]="currentPreference.universidad" style="width: 250px;">
+      <option value="">Seleccione…</option>
+      <option value="UNMSM">UNMSM</option>
+      <option value="UNI">UNI</option>
+      <option value="PUCP">PUCP</option>
+    </select>
+  </div>
+
+  <!-- BOTONES -->
+  <div style="margin-top: 15px;">
+    <button (click)="getZonasByPreferences()">Buscar Zonas por Preferencia</button>
+    <button (click)="savePreference()">Guardar Preferencia</button>
+  </div>
+
+  <hr style="margin: 30px 0;" />
+
+  <h2>Zonas Encontradas</h2>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading">
+    Cargando...
+  </div>
+
+  <!-- Mensaje cuando no hay zonas -->
+  <div *ngIf="zonas.length === 0 && !isLoading">
+    No se encontraron zonas que coincidan con los filtros.<br /><br />
+    Ajusta tu presupuesto, tiempo de viaje o nivel de seguridad.
+  </div>
+
+  <!-- Lista de zonas -->
+  <div *ngIf="zonas.length > 0">
+    <div *ngFor="let zona of zonas" style="margin-bottom: 20px;">
+      <h3>{{ zona.nombreZona }}</h3>
+      <p><strong>Dirección:</strong> {{ zona.direccion }}</p>
+      <p><strong>Precio:</strong> {{ zona.precio }} soles</p>
+      <p><strong>Distancia:</strong> {{ zona.distancia }} km</p>
+
+      <a [routerLink]="['/zona', zona.idZona]">Ver detalles</a>
+      <hr />
+    </div>
+  </div>
+
+</div>

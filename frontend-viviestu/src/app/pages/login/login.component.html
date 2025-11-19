@@ -1,0 +1,113 @@
+<!-- Contenedor principal ajustado para centrar el formulario en el viewport -->
+<div class="funcionalidad-1">
+  <div class="pesta-a-2">
+
+    <!-- Tarjeta del Formulario (Rectangle-1) -->
+    <div class="rectangle-1">
+
+      <!-- Header (Rectangle-2) - Mantengo la estructura de navegación de Figma -->
+      <div class="rectangle-2"></div>
+      <div class="vivi-estu">ViviEstu</div>
+      <div class="user-123">User123</div>
+      <!-- Enlaces de Navegación usando routerLink -->
+      <a routerLink="/inicio" class="inicio">Inicio</a>
+      <a routerLink="/nosotros" class="nosotros">Nosotros</a>
+      <a routerLink="/mas" class="m-s">Más</a>
+      <img class="rectangle-7" src="placeholder-user.svg" alt="User Icon" />
+      
+      <!-- Título del Formulario -->
+      <div class="iniciar-sesion">Iniciar Sesion</div>
+      
+      <!-- Formulario de Login: (ngSubmit) llama a la función login() en el TS -->
+      <form (ngSubmit)="login()" #loginForm="ngForm">
+
+        <!-- Campo de Correo Electrónico -->
+        <div class="group-13">
+          <label for="email" class="nombre-de-usuario">Correo Electrónico</label>
+          <div class="rectangle-5">
+            <!-- INPUT con Two-Way Binding: [(ngModel)] -->
+            <input 
+              id="email" 
+              name="correo" 
+              type="correo"
+              placeholder="Introduce tu correo electrónico"
+              required
+              [(ngModel)]="loginData.correo"
+              class="user-1232" 
+              style="
+                /* Estilos en línea para anular la posición absoluta de Figma y centrar el texto */
+                position: absolute; 
+                top: -15px; 
+                width: 100%; 
+                height: 100%; 
+                border: none; 
+                padding: 0 16px; 
+                background: transparent;
+                outline: none;
+              "
+            />
+          </div>
+        </div>
+
+        <!-- Campo de Contraseña -->
+        <div class="group-14">
+          <label for="contrasena" class="contrase-a">Contraseña</label>
+          <div class="rectangle-52">
+            <!-- INPUT con Two-Way Binding: [(ngModel)] -->
+            <input 
+              id="contrasena" 
+              name="contrasena" 
+              type="password"
+              placeholder="***************"
+              required
+              [(ngModel)]="loginData.contrasena"
+              class="user-1233" 
+              style="
+                /* Estilos en línea para anular la posición absoluta de Figma y centrar el texto */
+                position: absolute; 
+                top: -15px; 
+                width: 100%; 
+                height: 100%; 
+                border: none; 
+                padding: 0 16px; 
+                background: transparent;
+                outline: none;
+              "
+            />
+          </div>
+        </div>
+        
+        <!-- Mensaje de Error: *ngIf muestra el div solo si 'errorMessage' tiene valor -->
+        <div *ngIf="errorMessage" class="error-message" style="position: absolute; left: 20px; top: 320px; width: 320px;">
+          <p>{{ errorMessage }}</p>
+        </div>
+
+        <!-- Botón de INICIAR SESIÓN -->
+        <!-- El botón se deshabilita si está enviando [isSubmitting] o si el formulario no es válido [!loginForm.valid] -->
+        <button type="submit" class="group-15" [disabled]="isSubmitting || !loginForm.valid">
+          <div class="rectangle-12"></div>
+          <div class="iniciar-sesi-n">
+            <span *ngIf="!isSubmitting">INICIAR SESIÓN</span>
+            <span *ngIf="isSubmitting">Cargando...</span>
+          </div>
+        </button>
+
+      </form>
+
+      <!-- Enlace Contraseña Olvidada -->
+      <div class="group-16">
+        <a routerLink="/forgot-password" class="contrase-a-olvidada">
+          Contraseña olvidada
+        </a>
+      </div>
+
+      <!-- Enlace para registrarse -->
+      <div class="group-162">
+        <a routerLink="/register" class="no-tienes-cuenta">
+          ¿No tienes cuenta? Regístrate aquí
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</div>
