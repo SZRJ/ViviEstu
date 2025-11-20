@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
 export class PreferenceService {
   private http = inject(HttpClient);
   private usuarioService = inject(UsuarioService);
-  private API_URL = `${environment.apiUrl}/api/preferencias`; 
+  private API_URL = `${environment.apiUrl}/preferencias`; 
 
   /**
    * Proporciona un objeto de preferencia inicial con valores por defecto.

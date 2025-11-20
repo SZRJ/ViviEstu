@@ -18,8 +18,8 @@ export class UsuarioService {
   private http = inject(HttpClient);
 
   // --- DEFINICIÓN DE URLs ---
-  private API_USUARIOS = `${environment.apiUrl}/api/usuarios`;
-  private API_PREFERENCIAS = `${environment.apiUrl}/api/preferencias`;
+  private API_USUARIOS = `${environment.apiUrl}/usuarios`;
+  private API_PREFERENCIAS = `${environment.apiUrl}/preferencias`;
 
   // --- ESTADO DEL USUARIO (SEÑALES) ---
   token = signal<string | null>(localStorage.getItem('auth_token'));

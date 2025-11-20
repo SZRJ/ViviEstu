@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ZonaService {
   private http = inject(HttpClient);
-  private API_URL = `${environment.apiUrl}/api/zonas`;
+  private API_URL = `${environment.apiUrl}/zonas`;
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
