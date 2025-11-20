@@ -1,35 +1,67 @@
 import { Routes, Router, CanActivateFn } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { inject } from '@angular/core';
-import { UsuarioService } from './core/services/usuario.service'; 
 
-// Guard para proteger las rutas: solo permite el acceso si el usuario está logueado
+// --- Importaciones de Componentes ---
+// Correcto: Apunta directo a pages/login según tu estructura actual
+import { LoginComponent } from './pages/login/login.component';
+import { HomeComponent } from './pages/home/home.component';
+
+// Si aún no creas el registro, mantén esta línea comentada o bórrala
+ import { RegisterComponent } from './pages/register/register.component'; 
+
+import { UsuarioService } from './core/services/usuario.service'; 
+import { UserProfileComponent } from './pages/user-profile/user-profile.component'; 
+
+
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { ZonaListComponent } from './pages/zona-list/zona-list.component';
+import { ZonaDetailComponent } from './pages/zona-detail/zona-detail.component'; // Crearemos este luego
+
 const authGuard: CanActivateFn = () => {
     const usuarioService = inject(UsuarioService);
     const router = inject(Router);
     
-    // Si la señal de token es verdadera, permite el acceso.
     if (usuarioService.isLoggedIn()) {
         return true;
     } else {
-        // Si no hay token, redirige al login
         return router.navigate(['/login']);
     }
 };
 
 export const routes: Routes = [
     { 
+      path: '', 
+      component: HomeComponent,
+      pathMatch: 'full'
+    },
+    { 
       path: 'login', 
       component: LoginComponent 
     },
+    
+    // NOTA: Como tienes comentado el registro, si das clic en "Registrarse" 
+    // en el Home, el wildcard de abajo (**) te devolverá al Home.
+    
+    { 
+      path: 'register', 
+      component: RegisterComponent 
+    },
+    
+    { path: 'profile', component: UserProfileComponent },
+
+    /*
     { 
       path: 'dashboard', 
       component: DashboardComponent, 
-      canActivate: [authGuard] // Aplicar la protección aquí
-    }, 
-    // Redirigir la ruta raíz a dashboard
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-    // Manejar cualquier otra ruta
-    { path: '**', redirectTo: '/dashboard' }
+      canActivate: [authGuard] 
+    },
+    */
+
+    // NUEVAS RUTAS
+    { path: 'dashboard', component: DashboardComponent }, // Panel principal
+    { path: 'zonas', component: ZonaListComponent },      // Listado general
+    { path: 'zonas/:id', component: ZonaDetailComponent }, // Detalle (Mockup)
+
+    // Wildcard: Cualquier ruta desconocida devuelve al Home
+    { path: '**', redirectTo: '' }
 ];

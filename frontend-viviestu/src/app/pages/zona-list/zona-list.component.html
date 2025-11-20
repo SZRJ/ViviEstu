@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>Encuentra tu zona ideal</h2>
+  
+  <div *ngIf="loading" class="loading">Cargando zonas...</div>
+
+  <div class="zonas-grid" *ngIf="!loading">
+    
+    <div class="zona-card" *ngFor="let z of zonas" [routerLink]="['/zonas', z.idZona]">
+      <img [src]="getImagenRandom(z.idZona)" alt="Foto zona">
+      
+      <div class="card-content">
+        <div class="header-card">
+          <h3>{{ z.nombre }}</h3>
+          <span class="badge" [class.alta]="z.seguridad === 'ALTA'">Seg: {{ z.seguridad }}</span>
+        </div>
+        
+        <div class="details">
+          <p>💰 Precio Promedio: <b>S/. {{ z.precioPromedio }}</b></p>
+          <p>🚌 Transporte: {{ z.transporteDisponible }}</p>
+        </div>
+        
+        <button class="btn-ver">Ver Detalles</button>
+      </div>
+    </div>
+
+  </div>
+</div>

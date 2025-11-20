@@ -1,27 +1,48 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Preference } from '../models/preference.model';
-import { Zona } from '../models/zona.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { ApiResponse } from '../models/api-response.model';
+import { Zona } from '../models/zona.model'; // Asegúrate de tener tu modelo Zona creado
 
 @Injectable({
   providedIn: 'root'
 })
 export class ZonaService {
   private http = inject(HttpClient);
-  // Reemplaza con la URL base de tu backend Spring Boot
-  private API_URL = 'http://localhost:8080/api/zonas'; 
+  private API_URL = 'http://localhost:8080/api/zonas';
 
-  /**
-   * Busca zonas enviando los parámetros de preferencia en el cuerpo de la solicitud (POST).
-   * * @param preference - Objeto Preference con los filtros del usuario.
-   * @returns Observable de un arreglo de objetos Zona.
-   */
-  getZonasByFilters(preference: Preference): Observable<Zona[]> {
-    // El endpoint que usa un objeto Preference para filtrar
-    const endpoint = `${this.API_URL}/filtrar`; 
-    return this.http.post<Zona[]>(endpoint, preference);
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
   }
 
-  // Puedes añadir otros métodos como obtener por ID, etc.
+ 
+
+  // 2. OBTENER POR ID (GET /api/zonas/{id})
+  obtenerPorId(id: number): Observable<Zona> {
+    return this.http.get<ApiResponse<Zona>>(`${this.API_URL}/${id}`, { headers: this.getAuthHeaders() })
+      .pipe(map(resp => resp.data));
+  }
+
+  listarTodas(): Observable<Zona[]> {
+    return this.http.get<any>(this.API_URL, { headers: this.getAuthHeaders() })
+      .pipe(map(response => {
+        // Intenta sacar .data, si no existe, usa la respuesta directa
+        const lista = response.data || response;
+        return Array.isArray(lista) ? lista : [];
+      }));
+  }
+  
+  // Haz lo mismo con listarRecomendadas si puedes
+  listarRecomendadas(idUsuario: number): Observable<Zona[]> {
+    const url = `${this.API_URL}/recomendadas?idUsuario=${idUsuario}`;
+    return this.http.get<any>(url, { headers: this.getAuthHeaders() })
+      .pipe(map(response => {
+         const lista = response.data || response;
+         return Array.isArray(lista) ? lista : [];
+      }));
+  }
 }

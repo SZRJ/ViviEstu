@@ -1,0 +1,70 @@
+<div class="landing-container">
+  
+  <header class="navbar">
+    <div class="nav-left">
+      <h1 class="logo-text" (click)="clickLogo()" style="cursor: pointer;">
+        ViviEstu
+      </h1>
+      
+      <nav class="nav-links">
+        <a href="#">Inicio</a>
+        <a href="#">Más</a>
+        <a href="#">Nosotros</a>
+      </nav>
+    </div>
+
+    <div class="nav-right">
+  
+      <div *ngIf="usuarioNombre" class="user-logged-in">
+        <span class="greeting" routerLink="/profile" style="cursor: pointer;">
+              Hola, <b>{{ usuarioNombre }}</b>
+        </span>
+        <button (click)="logout()" class="btn btn-secondary">
+          Cerrar Sesión
+        </button>
+      </div>
+
+      <div *ngIf="!usuarioNombre" class="auth-buttons">
+        <a routerLink="/login" class="btn btn-secondary">Iniciar Sesión</a>
+        <a routerLink="/register" class="btn btn-primary">Registrarse</a>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="hero-section">
+    
+    <div class="hero-text">
+      <h2>Encuentra tu lugar ideal cerca de la universidad</h2>
+      <p>Porque estudiar también es elegir donde vivir</p>
+    </div>
+
+    <div class="hero-visuals">
+      <img 
+        src="/chat-gpt-image-sep-24-2025-08-58-55-pm-10.png" 
+        alt="Icono Casa" 
+        class="icon-house"
+      >
+      
+      <img 
+        src="/chat-gpt-image-sep-24-2025-09-31-01-pm-10.png" 
+        alt="Estudiantes buscando casa" 
+        class="main-illustration"
+      >
+    </div>
+
+    <div class="features-bar">
+      <span>Seguridad</span>
+      <span>Transporte</span>
+      <span>Cercanía</span>
+      <span>Comunidad</span>
+    </div>
+
+    <div class="cta-container">
+      <button class="btn btn-large" (click)="clickEmpezar()">
+        EMPEZAR
+      </button>
+    </div>
+
+  </main>
+</div>
