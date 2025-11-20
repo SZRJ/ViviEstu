@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CalificacionRepository extends JpaRepository<Calificacion, Integer> {
 
-    boolean existsByUsuarioIdUsuarioAndZonaIdZona(Integer usuarioId, Integer zonaId);
+    boolean existsByUsuarioIdUsuarioAndZonaIdZona(Long usuarioId, Integer zonaId);
 
     @Query("SELECT AVG(c.puntuacion) FROM Calificacion c WHERE c.zona.idZona = ?1")
     Double findPromedioPorZona(Integer idZona);
@@ -14,5 +14,5 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Inte
     @Query("SELECT COUNT(c) FROM Calificacion c WHERE c.zona.idZona = ?1")
     Long countByZonaId(Integer idZona);
 
-    Calificacion findByUsuarioIdUsuarioAndZonaIdZona(Integer usuarioId, Integer zonaId);
+    Calificacion findByUsuarioIdUsuarioAndZonaIdZona(Long usuarioId, Integer zonaId);
 }

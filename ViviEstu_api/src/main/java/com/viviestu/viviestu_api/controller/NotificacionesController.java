@@ -19,7 +19,7 @@ public class NotificacionesController {
     private RecomendacionService recomendacionService;
 
     @GetMapping("/notificaciones/{usuarioId}")
-    public ResponseEntity<?> obtenerNotificaciones(@PathVariable("usuarioId") Integer usuarioId,
+    public ResponseEntity<?> obtenerNotificaciones(@PathVariable("usuarioId") Long usuarioId,
                                                    @RequestParam(value = "top", required = false, defaultValue = "5") Integer top) {
         List<NotificacionDTO> lista = recomendacionService.generarRecomendacionesParaUsuario(usuarioId, top);
         if (lista.isEmpty()) {

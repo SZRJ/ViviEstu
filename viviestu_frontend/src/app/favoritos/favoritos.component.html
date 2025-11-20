@@ -1,0 +1,21 @@
+<div id="favoritos">
+  <form class="favoritos-form" (submit)="add(); $event.preventDefault();">
+    <input type="text" [(ngModel)]="title" name="title" placeholder="Título" required />
+    <input type="text" [(ngModel)]="description" name="description" placeholder="Descripción" />
+    <button class="btn-add" type="submit">Añadir</button>
+  </form>
+
+  <div *ngIf="list.length === 0">No hay favoritos.</div>
+  <div *ngFor="let f of list">
+    <div style="border:1px solid #ddd;padding:8px;margin:8px 0;display:flex;justify-content:space-between;">
+      <div>
+        <strong>{{f.title}}</strong>
+        <div>{{f.description}}</div>
+        <small>ID: {{f.id}} {{f.createdAt ? ('- ' + (f.createdAt | date:'short')) : ''}}</small>
+      </div>
+      <div>
+        <button (click)="remove(f.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

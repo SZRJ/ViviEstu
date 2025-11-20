@@ -26,18 +26,18 @@ public class CalificacionService {
     /**
      * Registra una calificación (1-5). Si el usuario ya calificó la zona, actualiza la puntuación.
      */
-    public Calificacion registrarCalificacion(Integer zonaId, Integer usuarioId, Integer puntuacion) throws IllegalArgumentException {
+    public Calificacion registrarCalificacion(Integer zonaId, Long usuarioId, Integer puntuacion) throws IllegalArgumentException {
         if (puntuacion == null || puntuacion < 1 || puntuacion > 5) {
             throw new IllegalArgumentException("Puntuación inválida. Debe ser entre 1 y 5.");
         }
-        Optional<Usuario> uOpt = usuarioRepository.findById(usuarioId);
+    Optional<Usuario> uOpt = usuarioRepository.findById(usuarioId);
         if (!uOpt.isPresent()) throw new IllegalArgumentException("Usuario no encontrado");
 
         Optional<Zona> zOpt = zonaRepository.findById(zonaId);
         if (!zOpt.isPresent()) throw new IllegalArgumentException("Zona no encontrada");
 
         // Si ya existe calificación del usuario -> actualizar
-        Calificacion existente = calificacionRepository.findByUsuarioIdUsuarioAndZonaIdZona(usuarioId, zonaId);
+    Calificacion existente = calificacionRepository.findByUsuarioIdUsuarioAndZonaIdZona(usuarioId, zonaId);
         if (existente != null) {
             existente.setPuntuacion(puntuacion);
             return calificacionRepository.save(existente);

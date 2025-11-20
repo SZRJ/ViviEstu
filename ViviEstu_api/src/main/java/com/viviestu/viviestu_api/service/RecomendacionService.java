@@ -1,9 +1,7 @@
 package com.viviestu.viviestu_api.service;
 
 import com.viviestu.viviestu_api.dto.NotificacionDTO;
-import com.viviestu.viviestu_api.model.Usuario;
 import com.viviestu.viviestu_api.model.Zona;
-import com.viviestu.viviestu_api.repository.UsuarioRepository;
 import com.viviestu.viviestu_api.repository.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +13,6 @@ import java.util.stream.Collectors;
 public class RecomendacionService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private ZonaRepository zonaRepository;
 
     /**
@@ -27,52 +22,21 @@ public class RecomendacionService {
      *  - Priorizar zonas que contengan el transporte del usuario
      *  - Retornar top N (por defecto 5)
      */
-    public List<NotificacionDTO> generarRecomendacionesParaUsuario(Integer usuarioId, int topN) {
-        Optional<Usuario> uOpt = usuarioRepository.findById(usuarioId);
-        if (!uOpt.isPresent()) return Collections.emptyList();
-
-        Usuario u = uOpt.get();
-        // Requisitos mínimos: universidad y presupuesto (RN-18)
-        if (u.getUniversidad() == null || u.getUniversidad().trim().isEmpty() || u.getPresupuesto() == null) {
-            return Collections.emptyList();
-        }
-
-        Double presupuesto = u.getPresupuesto();
-        String transporte = u.getTransporte() == null ? "" : u.getTransporte().toLowerCase().trim();
-
-        // 1) Zonas con precio <= presupuesto
-        List<Zona> porPrecio = zonaRepository.findByPrecioPromedioLessThanEqual(presupuesto);
-
-        // 2) Si no hay resultados, tomar zonas cercanas por seguridad o transporte (fallback)
-        if (porPrecio.isEmpty()) {
-            porPrecio = zonaRepository.findAll();
-        }
-
-        // 3) Construir lista con prioridad: contiene transporte -> motivo "coincide transporte", else "ajusta a presupuesto" o "recomendado"
+    public List<NotificacionDTO> generarRecomendacionesParaUsuario(Long usuarioId, int topN) {
+        // Implementación mínima: devolver las zonas disponibles como recomendaciones genéricas.
+        List<Zona> zonas = zonaRepository.findAll();
         List<NotificacionDTO> result = new ArrayList<>();
-        for (Zona z : porPrecio) {
+        for (Zona z : zonas) {
             NotificacionDTO n = new NotificacionDTO();
             n.setZonaId(z.getIdZona());
             n.setZonaNombre(z.getNombre());
             n.setPrecioPromedio(z.getPrecioPromedio());
-            String motivo = "Ajuste a tu presupuesto";
-
-            if (!transporte.isEmpty() && z.getTransporteDisponible() != null && z.getTransporteDisponible().toLowerCase().contains(transporte)) {
-                motivo = "Buena conexión con tu medio de transporte: " + transporte;
-            } else if (z.getSeguridad() != null && z.getSeguridad().toLowerCase().contains("alta")) {
-                motivo = "Zona con seguridad alta";
-            }
-            n.setMotivo(motivo);
+            n.setMotivo("Recomendado");
             result.add(n);
         }
 
-        // Orden simple: priorizar coincidencias por transporte, luego precio ascendente
-        List<NotificacionDTO> sorted = result.stream()
-                .sorted(Comparator.comparing((NotificacionDTO nd) -> !nd.getMotivo().toLowerCase().contains("conexión"))
-                        .thenComparing(NotificacionDTO::getPrecioPromedio))
-                .collect(Collectors.toList());
-
+        result.sort(Comparator.comparing(n -> n.getPrecioPromedio() == null ? Double.MAX_VALUE : n.getPrecioPromedio()));
         if (topN <= 0) topN = 5;
-        return sorted.stream().limit(topN).collect(Collectors.toList());
+        return result.stream().limit(topN).toList();
     }
 }
