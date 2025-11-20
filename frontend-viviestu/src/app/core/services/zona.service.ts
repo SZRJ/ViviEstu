@@ -4,12 +4,14 @@ import { Observable, map } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { Zona } from '../models/zona.model'; // Asegúrate de tener tu modelo Zona creado
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ZonaService {
   private http = inject(HttpClient);
-  private API_URL = 'http://localhost:8080/api/zonas';
+  private API_URL = `${environment.apiUrl}/api/zonas`;
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');

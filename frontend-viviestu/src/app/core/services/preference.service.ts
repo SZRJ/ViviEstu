@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import { Preference } from '../models/preference.model';
 import { UsuarioService } from './usuario.service'; // Necesario para obtener el ID de usuario
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { UsuarioService } from './usuario.service'; // Necesario para obtener el
 export class PreferenceService {
   private http = inject(HttpClient);
   private usuarioService = inject(UsuarioService);
-  private API_URL = 'http://localhost:8080/api/preferencias'; 
+  private API_URL = `${environment.apiUrl}/api/preferencias`; 
 
   /**
    * Proporciona un objeto de preferencia inicial con valores por defecto.

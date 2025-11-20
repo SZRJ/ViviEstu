@@ -9,6 +9,8 @@ import { UserInfo } from '../models/user-info.model';
 import { Preference } from '../models/preference.model';
 import { ApiResponse } from '../models/api-response.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,8 +18,8 @@ export class UsuarioService {
   private http = inject(HttpClient);
 
   // --- DEFINICIÓN DE URLs ---
-  private API_USUARIOS = 'http://localhost:8080/api/usuarios';
-  private API_PREFERENCIAS = 'http://localhost:8080/api/preferencias';
+  private API_USUARIOS = `${environment.apiUrl}/api/usuarios`;
+  private API_PREFERENCIAS = `${environment.apiUrl}/api/preferencias`;
 
   // --- ESTADO DEL USUARIO (SEÑALES) ---
   token = signal<string | null>(localStorage.getItem('auth_token'));
