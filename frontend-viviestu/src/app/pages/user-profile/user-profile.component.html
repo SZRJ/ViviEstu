@@ -35,43 +35,75 @@
       <form (ngSubmit)="guardarCambios()">
         
         <div class="form-grid">
+
           <div class="form-group">
             <label>Universidad / Instituto</label>
             <select [(ngModel)]="misPreferencias.universidad" name="universidad">
-              <option value="UPC">UPC - Monterrico</option>
-              <option value="UPC-SanIsidro">UPC - San Isidro</option>
-              <option value="ULima">U. de Lima</option>
+              <option [ngValue]="''" disabled>Selecciona tu universidad</option>
+              <option [ngValue]="'UPC-Monterrico'">UPC - Monterrico</option>
+              <option [ngValue]="'UPC-SanIsidro'">UPC - San Isidro</option>
+              <option [ngValue]="'Ulima'">U. de Lima</option>
             </select>
           </div>
 
           <div class="form-group">
             <label>Presupuesto Máximo (S/.)</label>
-            <input type="number" [(ngModel)]="misPreferencias.presupuesto" name="presupuesto">
-            <input type="range" min="300" max="3000" step="50" [(ngModel)]="misPreferencias.presupuesto" name="rangePresupuesto">
+            <input
+              type="number"
+              [(ngModel)]="misPreferencias.presupuesto"
+              name="presupuesto">
+            <input
+              type="range"
+              min="300"
+              max="3000"
+              step="50"
+              [(ngModel)]="misPreferencias.presupuesto"
+              name="rangePresupuesto">
+          </div>
+
+          <div class="form-group">
+            <label>Tiempo máximo de viaje (minutos)</label>
+            <input type="number"
+                  min="5" max="90" step="5"
+                  [(ngModel)]="misPreferencias.tiempoMax"
+                  name="tiempoMaxInput">
+            <input type="range"
+                  min="5" max="90" step="5"
+                  [(ngModel)]="misPreferencias.tiempoMax"
+                  name="tiempoMaxRange">
           </div>
 
           <div class="form-group">
             <label>Medio de Transporte</label>
             <select [(ngModel)]="misPreferencias.transporte" name="transporte">
-              <option value="Bus">Transporte Público (Bus)</option>
-              <option value="Caminando">Caminando</option>
-              <option value="Bicicleta">Bicicleta</option>
+              <option [ngValue]="''" disabled>Selecciona tu medio de transporte</option>
+              <option [ngValue]="'Bus'">Transporte Público (Bus, Metropolitano)</option>
+              <option [ngValue]="'Caminando'">Caminando</option>
+              <option [ngValue]="'Bicicleta'">Bicicleta</option>
+              <option [ngValue]="'Carro propio'">Carro propio (o taxi)</option>
             </select>
           </div>
 
           <div class="form-group">
             <label>Nivel de Seguridad</label>
             <select [(ngModel)]="misPreferencias.seguridad" name="seguridad">
-              <option value="Alta">Alta (Rejas/Vigilancia)</option>
-              <option value="Media">Media (Zona tranquila)</option>
+              <option [ngValue]="''" disabled>Selecciona nivel de seguridad</option>
+              <option [ngValue]="'Alta'">Alta (Rejas/Vigilancia)</option>
+              <option [ngValue]="'Media'">Media (Zona tranquila)</option>
             </select>
           </div>
+
         </div>
 
         <button type="submit" class="btn-save" [disabled]="isSaving">
           {{ isSaving ? 'Guardando...' : 'Guardar Preferencias' }}
         </button>
       </form>
+
+      <div *ngIf="isLoadingPrefs" class="loading-text">
+        Cargando preferencias...
+      </div>
+
     </div>
 
   </div>
