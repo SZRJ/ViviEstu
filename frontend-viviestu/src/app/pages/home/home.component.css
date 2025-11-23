@@ -46,6 +46,64 @@
 .nav-right {
   display: flex;
   gap: 15px;
+  align-items: center;
+  position: relative
+}
+
+/* --- ESTILOS DEL MENÚ DESPLEGABLE (Copiados del Dashboard) --- */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 16px; /* Ajustado para el Home */
+  user-select: none;
+}
+
+.user-menu b {
+  font-weight: 600;
+}
+
+.user-menu .chevron {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%; /* Justo debajo del navbar */
+  margin-top: 10px; /* Un pequeño espacio */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  border: 1px solid #eee;
+}
+
+.user-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Rubik", sans-serif;
+  color: #333;
+}
+
+.user-dropdown button:hover {
+  background-color: #f0fdfa;
+  color: #000;
+}
+
+.user-dropdown hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 4px 0;
 }
 
 /* --- BOTONES --- */
