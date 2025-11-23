@@ -8,6 +8,7 @@ import { LoginResponse } from '../models/login-response.model';
 import { UserInfo } from '../models/user-info.model';
 import { Preference } from '../models/preference.model';
 import { ApiResponse } from '../models/api-response.model';
+import { RegistroRequest } from '../models/registro-request.model';
 
 import { environment } from '../../../environments/environment';
 
@@ -26,7 +27,14 @@ export class UsuarioService {
   userInfo = signal<UserInfo | null>(this.loadUserInfo());
 
   // Nombre computado para mostrar en el Home
-  userName = computed(() => this.userInfo()?.nombre || 'Invitado');
+  userName = computed(() =>
+  this.userInfo()?.nombreUsuario
+  || this.userInfo()?.nombre
+  || this.userInfo()?.email
+  || localStorage.getItem('usuarioNombre')
+  || 'Invitado'
+);
+
 
   constructor() {
     // Sincroniza el estado al recargar la página
@@ -42,6 +50,9 @@ export class UsuarioService {
   // --- HELPER: CABECERAS CON TOKEN ---
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
+    if (!token) {
+      console.warn('⚠️ No hay token en localStorage para la petición');
+    }
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -98,7 +109,7 @@ export class UsuarioService {
             }
 
             // 6. Guardar Nombre
-            const nombreParaGuardar = info.nombre || info.nombreUsuario || credentials.correo;
+            const nombreParaGuardar = info.nombreUsuario || info.nombre || info.correo || credentials.correo;
             if (nombreParaGuardar) {
                 localStorage.setItem('usuarioNombre', nombreParaGuardar);
             }
@@ -110,6 +121,29 @@ export class UsuarioService {
     const endpoint = `${this.API_USUARIOS}/registro`;
     const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
     return this.http.post<any>(endpoint, datos, httpOptions);
+  }
+
+  actualizarUsuario(idUsuario: number, datos: Partial<RegistroRequest>): Observable<any> {
+    const endpoint = `${this.API_USUARIOS}/${idUsuario}/perfil`;
+
+    return this.http.put<any>(endpoint, datos, { headers: this.getAuthHeaders() }).pipe(
+      tap(resp => {
+        const data = (resp as any).data || resp;
+
+        if (data) {
+          // Actualiza info en memoria y localStorage
+          localStorage.setItem('user_info', JSON.stringify(data));
+          this.userInfo.set(data);
+
+          const nombreParaGuardar =
+            data.nombreUsuario || data.nombre || data.correo || data.email;
+
+          if (nombreParaGuardar) {
+            localStorage.setItem('usuarioNombre', nombreParaGuardar);
+          }
+        }
+      })
+    );
   }
 
   logout(): void {
