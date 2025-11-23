@@ -1,9 +1,36 @@
 <nav class="navbar">
-  <div class="logo" routerLink="/">ViviEstu</div>
-  <div class="user-info">
-    <span>Hola, <b>{{ usuarioNombre }}</b></span>
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/" style="cursor: pointer;">ViviEstu</h1>
+
+    <nav class="nav-links">
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/dashboard">Más</a>
+      <a routerLink="/nosotros">Nosotros</a>
+    </nav>
   </div>
+
+  <div class="nav-right" *ngIf="usuarioService.isLoggedIn(); else invitadoDash">
+    
+    <div class="user-menu" (click)="toggleUserMenu($event)">
+      Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
+    </div>
+
+    <div class="user-dropdown" *ngIf="showUserMenu">
+      <button (click)="irAlPerfil()">Actualizar perfil</button>
+      <button (click)="irADesactivarCuenta()">Desactivar cuenta</button>
+      <hr>
+      <button (click)="logout()">Cerrar sesión</button>
+    </div>
+
+  </div>
+
+  <ng-template #invitadoDash>
+    <div class="nav-right">
+      <button class="btn-login" routerLink="/login">Iniciar sesión</button>
+    </div>
+  </ng-template>
 </nav>
+
 
 <div class="dashboard-container">
   <h1>Panel de Control</h1>
