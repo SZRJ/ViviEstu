@@ -48,8 +48,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // 🟢 CÓDIGO CORREGIDO: Declaramos y llenamos la lista DE AUTORIDADES
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        // 🔑 LÓGICA TEMPORAL PARA ASIGNAR ROLE_ADMIN:
-        if (usuario.getIdUsuario() == 1) { // Suponemos que ID 1 es el Admin (Reze)
+        // Lógica de asignación de roles: conservar la comprobación por ID (legacy)
+        if (usuario.getIdUsuario() == 1) { // Suponemos que ID 1 es el Admin
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
 

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ViviEstu - Favoritos (Demo)</title>
+  <style>
+    body{font-family: Arial, Helvetica, sans-serif;max-width:900px;margin:24px auto;padding:0 16px}
+    h1{color:#2c3e50}
+    .fav{border:1px solid #ddd;padding:10px;margin:8px 0;border-radius:6px;display:flex;justify-content:space-between}
+    .fav .meta{max-width:80%}
+    button{background:#2d89ef;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer}
+    button.danger{background:#e74c3c}
+    form{display:flex;gap:8px;align-items:center}
+    input[type=text]{flex:1;padding:8px;border:1px solid #ccc;border-radius:4px}
+  </style>
+</head>
+<body>
+  <h1>Favoritos — Demo</h1>
+  <!-- Página de demostración para Favoritos -->
+
+  <form id="favForm">
+    <input id="title" type="text" placeholder="Título" required />
+    <input id="description" type="text" placeholder="Descripción" />
+    <button type="submit">Añadir</button>
+  </form>
+
+  <h2>Lista</h2>
+  <div id="list"></div>
+
+  <script>
+    const API = '/api/favoritos'; // si ejecutas backend en otro host/puerto, cámbialo.
+
+    async function fetchList() {
+      const res = await fetch(API);
+      const data = await res.json();
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      if (!data || data.length === 0) {
+        list.innerHTML = '<p>No hay favoritos.</p>';
+        return;
+      }
+      data.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'fav';
+        div.innerHTML = `
+          <div class="meta">
+            <strong>${escapeHtml(f.title || '')}</strong>
+            <div>${escapeHtml(f.description || '')}</div>
+            <small>ID: ${f.id} - ${f.createdAt ? new Date(f.createdAt).toLocaleString() : ''}</small>
+          </div>
+          <div>
+            <button class="danger" data-id="${f.id}">Eliminar</button>
+          </div>`;
+        list.appendChild(div);
+      });
+
+      // attach delete handlers
+      document.querySelectorAll('button.danger').forEach(btn => {
+        btn.addEventListener('click', async (ev) => {
+          const id = ev.currentTarget.getAttribute('data-id');
+          if (!confirm('Eliminar favorito ID ' + id + '?')) return;
+          await fetch(API + '/' + id, { method: 'DELETE' });
+          await fetchList();
+        });
+      });
+    }
+
+    function escapeHtml(unsafe) {
+      return unsafe
++        .replaceAll('&', '&amp;')
++        .replaceAll('<', '&lt;')
++        .replaceAll('>', '&gt;')
++        .replaceAll('"', '&quot;')
++        .replaceAll("'", '&#039;');
+    }
+
+    document.getElementById('favForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      if (!title) return alert('El título es obligatorio');
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description })
+      });
+      if (res.ok) {
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
+        await fetchList();
+      } else {
+        alert('Error al crear favorito');
+      }
+    });
+
+    // inicializar
+    fetchList().catch(err => console.error(err));
+  </script>
+</body>
+</html>

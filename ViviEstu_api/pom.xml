@@ -89,17 +89,36 @@
             <version>2.5.0</version>
         </dependency>
 
-        <!-- 🧰 Base de datos (usa solo uno de los dos) -->
-        <!-- PostgreSQL -->
+        <!-- 🧰 Base de datos (usa PostgreSQL en producción; H2 como fallback para desarrollo) -->
+        <!-- PostgreSQL (runtime) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+        <!-- H2 for in-memory testing / local developer fallback -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
+        <!-- Lombok (annotation processor configured in build plugins) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-        <!-- 🧪 Pruebas -->
+        <!-- ModelMapper -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

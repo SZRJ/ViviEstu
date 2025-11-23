@@ -1,0 +1,94 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.viviestu:ViviEstu_api:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.projectlombok:lombok:jar -> duplicate declaration of version (?) @ line 108, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.modelmapper:modelmapper:jar -> duplicate declaration of version 3.2.0 @ line 115, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------------< com.viviestu:ViviEstu_api >----------------------
+[INFO] Building ViviEstu_api 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.6:run (default-cli) > test-compile @ ViviEstu_api >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ViviEstu_api ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ViviEstu_api ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 76 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/LUIS G/OneDrive/Escritorio/ing soft/ViviEstu/ViviEstu_api/src/main/java/com/viviestu/viviestu_api/security/JwtUtil.java: C:\Users\LUIS G\OneDrive\Escritorio\ing soft\ViviEstu\ViviEstu_api\src\main\java\com\viviestu\viviestu_api\security\JwtUtil.java uses or overrides a deprecated API.
+[INFO] /C:/Users/LUIS G/OneDrive/Escritorio/ing soft/ViviEstu/ViviEstu_api/src/main/java/com/viviestu/viviestu_api/security/JwtUtil.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ViviEstu_api ---
+[INFO] skip non existing resourceDirectory C:\Users\LUIS G\OneDrive\Escritorio\ing soft\ViviEstu\ViviEstu_api\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ ViviEstu_api ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 9 source files with javac [debug release 21] to target\test-classes
+[INFO] /C:/Users/LUIS G/OneDrive/Escritorio/ing soft/ViviEstu/ViviEstu_api/src/test/java/com/viviestu/viviestu_api/service/ZonaServiceTest.java: C:\Users\LUIS G\OneDrive\Escritorio\ing soft\ViviEstu\ViviEstu_api\src\test\java\com\viviestu\viviestu_api\service\ZonaServiceTest.java uses unchecked or unsafe operations.
+[INFO] /C:/Users/LUIS G/OneDrive/Escritorio/ing soft/ViviEstu/ViviEstu_api/src/test/java/com/viviestu/viviestu_api/service/ZonaServiceTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] <<< spring-boot:3.3.6:run (default-cli) < test-compile @ ViviEstu_api <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.6:run (default-cli) @ ViviEstu_api ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.6)
+
+2025-11-22T01:22:01.846-05:00  INFO 12516 --- [ViviEstu_api] [           main] c.v.viviestu_api.ViviEstuApiApplication  : Starting ViviEstuApiApplication using Java 21.0.9 with PID 12516 (C:\Users\LUIS G\OneDrive\Escritorio\ing soft\ViviEstu\ViviEstu_api\target\classes started by LUIS G in C:\Users\LUIS G\OneDrive\Escritorio\ing soft\ViviEstu\ViviEstu_api)
+2025-11-22T01:22:01.849-05:00  INFO 12516 --- [ViviEstu_api] [           main] c.v.viviestu_api.ViviEstuApiApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-22T01:22:02.488-05:00  INFO 12516 --- [ViviEstu_api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-22T01:22:02.551-05:00  INFO 12516 --- [ViviEstu_api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56 ms. Found 7 JPA repository interfaces.
+2025-11-22T01:22:02.954-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-22T01:22:02.966-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-22T01:22:02.966-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-11-22T01:22:03.020-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-22T01:22:03.021-05:00  INFO 12516 --- [ViviEstu_api] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1134 ms
+2025-11-22T01:22:03.103-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-22T01:22:03.155-05:00  INFO 12516 --- [ViviEstu_api] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-11-22T01:22:03.193-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-22T01:22:03.420-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-22T01:22:03.443-05:00  INFO 12516 --- [ViviEstu_api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-22T01:22:07.757-05:00  INFO 12516 --- [ViviEstu_api] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn1: url=jdbc:h2:file:./data/viviestu user=SA
+2025-11-22T01:22:07.758-05:00  INFO 12516 --- [ViviEstu_api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-22T01:22:08.644-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-22T01:22:08.691-05:00  INFO 12516 --- [ViviEstu_api] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-22T01:22:08.989-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-22T01:22:09.466-05:00  WARN 12516 --- [ViviEstu_api] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-22T01:22:09.487-05:00  INFO 12516 --- [ViviEstu_api] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-11-22T01:22:09.911-05:00  INFO 12516 --- [ViviEstu_api] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-22T01:22:09.917-05:00  INFO 12516 --- [ViviEstu_api] [           main] c.v.viviestu_api.ViviEstuApiApplication  : Started ViviEstuApiApplication in 8.366 seconds (process running for 8.613)
+2025-11-22T01:22:20.628-05:00  INFO 12516 --- [ViviEstu_api] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-22T01:22:20.629-05:00  INFO 12516 --- [ViviEstu_api] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-22T01:22:20.630-05:00  INFO 12516 --- [ViviEstu_api] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+>>> EJECUTANDO FILTRO JWT: /api/usuarios/login
+Hibernate: select u1_0.id_usuario,u1_0.activo,u1_0.contrasena,u1_0.correo,u1_0.fecha_nacimiento,u1_0.nombre,u1_0.nombre_usuario,u1_0.verificado from usuarios u1_0 where u1_0.correo=?
+Hibernate: select u1_0.id_usuario,u1_0.activo,u1_0.contrasena,u1_0.correo,u1_0.fecha_nacimiento,u1_0.nombre,u1_0.nombre_usuario,u1_0.verificado from usuarios u1_0 where u1_0.correo=?
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:57 min
+[INFO] Finished at: 2025-11-22T01:23:53-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.6:run (default-cli) on project ViviEstu_api: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
