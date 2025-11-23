@@ -11,6 +11,7 @@ import { HomeComponent } from './pages/home/home.component';
 
 import { UsuarioService } from './core/services/usuario.service'; 
 import { UserProfileComponent } from './pages/user-profile/user-profile.component'; 
+import { EditProfileComponent } from './pages/edit-profile/edit-profile.component';
 
 
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -59,6 +60,7 @@ export const routes: Routes = [
 
     // NUEVAS RUTAS
     { path: 'dashboard', component: DashboardComponent }, // Panel principal
+    { path: 'editar-perfil', component: EditProfileComponent },
     { path: 'zonas', component: ZonaListComponent },      // Listado general
     { path: 'zonas/:id', component: ZonaDetailComponent }, // Detalle (Mockup)
 
