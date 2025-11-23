@@ -1,0 +1,97 @@
+<div class="register-page">
+  
+  <nav class="navbar">
+    <div class="logo" routerLink="/">ViviEstu</div>
+    <div class="nav-links">
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/nosotros">Nosotros</a>
+      <a routerLink="/dashboard">Más</a>
+    </div>
+    <div class="nav-actions">
+      <button (click)="cancelar()" class="btn-outline">Volver</button>
+    </div>
+  </nav>
+
+  <div class="register-container">
+    <div class="register-card">
+      
+      <h2 class="titulo-principal">Mi Perfil</h2>
+      <p class="subtitulo">ACTUALIZAR DATOS</p>
+
+      <div *ngIf="mensajeOk" class="alert alert-success">
+        {{ mensajeOk }}
+      </div>
+      <div *ngIf="mensajeError" class="alert alert-error">
+        {{ mensajeError }}
+      </div>
+
+      <form (ngSubmit)="guardarCambios()" #formEditar="ngForm">
+        
+        <div class="input-field">
+          <label>Nombre completo</label>
+          <input 
+            type="text" 
+            [(ngModel)]="datos.nombre" 
+            name="nombre" 
+            placeholder="Tu nombre" 
+            required>
+        </div>
+
+        <div class="input-field">
+          <label>Nombre de usuario</label>
+          <input 
+            type="text" 
+            [(ngModel)]="datos.nombreUsuario" 
+            name="nombreUsuario" 
+            placeholder="Usuario" 
+            required>
+        </div>
+
+        <div class="input-field">
+          <label>Correo electrónico</label>
+          <input 
+            type="email" 
+            [(ngModel)]="datos.correo" 
+            name="correo" 
+            placeholder="correo@ejemplo.com" 
+            required>
+        </div>
+
+        <div class="input-field">
+          <label>Fecha de nacimiento</label>
+          <input 
+            type="date" 
+            [(ngModel)]="datos.fechaNacimiento" 
+            name="fechaNacimiento" 
+            required>
+        </div>
+
+        <div class="input-field">
+          <label>Nueva contraseña (Opcional)</label>
+          <input
+            type="password"
+            [(ngModel)]="datos.contrasena"
+            name="contrasena"
+            minlength="6"
+            placeholder="Déjala vacía si no quieres cambiarla">
+        </div>
+
+        <button
+          type="submit"
+          class="btn-action"
+          [disabled]="formEditar.invalid || isSaving">
+          {{ isSaving ? 'Guardando...' : 'GUARDAR CAMBIOS' }}
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-cancel" 
+          (click)="cancelar()">
+          CANCELAR
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+</div>

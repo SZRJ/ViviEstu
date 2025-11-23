@@ -1,0 +1,153 @@
+/* Reset básico */
+:host {
+  display: block;
+  font-family: "Rubik", sans-serif;
+}
+
+.landing-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- NAVBAR (Estilo idéntico al Home) --- */
+.navbar {
+  background-color: #d1fef2;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Esto separa "ViviEstu" de "Inicio/Más/Nosotros" */
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+}
+
+/* Estilo de los enlaces para que salgan horizontales */
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-size: 18px;
+  font-weight: 500;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.nav-links a:hover {
+  opacity: 0.7;
+}
+
+.nav-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  position: relative;
+}
+
+/* --- MENÚ DE USUARIO (Dropdown) --- */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none; /* Evita que se seleccione el texto al hacer clic */
+}
+
+.user-menu b {
+  font-weight: 600;
+}
+
+.user-menu .chevron {
+  font-size: 12px;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 140%; /* Ajustado para que no tape el nombre */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  border: 1px solid #eee;
+}
+
+.user-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Rubik", sans-serif;
+  color: #333;
+}
+
+.user-dropdown button:hover {
+  background-color: #f0fdfa; /* Un verde muy suave al pasar el mouse */
+  color: #000;
+}
+
+.user-dropdown hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 4px 0;
+}
+
+/* --- GRID DASHBOARD (Tarjetas) --- */
+.dashboard-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.grid-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.action-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+  border: 1px solid #eee;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  border-color: #84dcc6;
+}
+
+.icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #fafafa;
+}

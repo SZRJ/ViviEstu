@@ -1,0 +1,224 @@
+/* Reset básico para evitar márgenes extraños */
+:host {
+  display: block;
+  font-family: "Rubik", sans-serif; /* Asegúrate de que la fuente esté cargada en index.html o styles.css */
+}
+
+.landing-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER / NAVBAR --- */
+.navbar {
+  background-color: #d1fef2;
+  height: 80px;
+  display: flex;
+  justify-content: space-between; /* Separa izquierda y derecha */
+  align-items: center;
+  padding: 0 40px; /* Espacio a los lados */
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Espacio entre Logo y Links */
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-size: 18px;
+  font-weight: 500;
+  margin-right: 20px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  position: relative
+}
+
+/* --- ESTILOS DEL MENÚ DESPLEGABLE (Copiados del Dashboard) --- */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 16px; /* Ajustado para el Home */
+  user-select: none;
+}
+
+.user-menu b {
+  font-weight: 600;
+}
+
+.user-menu .chevron {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%; /* Justo debajo del navbar */
+  margin-top: 10px; /* Un pequeño espacio */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 100;
+  border: 1px solid #eee;
+}
+
+.user-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Rubik", sans-serif;
+  color: #333;
+}
+
+.user-dropdown button:hover {
+  background-color: #f0fdfa;
+  color: #000;
+}
+
+.user-dropdown hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 4px 0;
+}
+
+/* --- BOTONES --- */
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover {
+  transform: scale(1.05); /* Efecto al pasar el mouse */
+}
+
+.btn-primary {
+  background-color: #84dcc6; /* Color de 'Registrarse' */
+  color: #191a20;
+  /* Si tenías un SVG de fondo para el botón, aquí podrías ponerlo, pero background-color es más limpio */
+}
+
+.btn-secondary {
+  background-color: transparent; /* 'Iniciar sesión' no tenía fondo en tu diseño original */
+  color: #191a20;
+}
+
+.btn-large {
+  background-color: #84dcc6;
+  font-size: 20px;
+  padding: 15px 40px;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* --- HERO SECTION (CONTENIDO) --- */
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra todo horizontalmente */
+  padding-top: 40px;
+  text-align: center;
+}
+
+.hero-text h2 {
+  font-size: 48px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  max-width: 800px;
+}
+
+.hero-text p {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.hero-visuals {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 350px; /* Altura reservada para la imagen */
+  display: flex;
+  justify-content: center;
+}
+
+.icon-house {
+  width: 100px;
+  position: absolute; /* Excepción: dejamos la casita flotando a la izquierda como en tu diseño */
+  left: 5%;
+  top: 0;
+}
+
+.main-illustration {
+  height: 100%; /* Se ajusta a la altura del contenedor */
+  object-fit: contain;
+}
+
+.features-bar {
+  display: flex;
+  gap: 60px; /* Espacio entre palabras */
+  margin: 30px 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.cta-container {
+  margin-bottom: 50px;
+}
+/* Contenedor para cuando el usuario está logueado */
+.user-logged-in {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Espacio entre el "Hola..." y el botón */
+}
+
+.greeting {
+  font-size: 18px;
+  color: #000;
+}
+
+.greeting b {
+  font-weight: 600; /* El nombre un poquito más gordito */
+}
+
+/* Aseguramos que el botón de cerrar sesión (que usa btn-secondary) 
+   tenga el cursor de manito al pasar el mouse */
+button.btn {
+  cursor: pointer;
+  font-family: "Rubik", sans-serif; /* Asegurar misma fuente */
+}

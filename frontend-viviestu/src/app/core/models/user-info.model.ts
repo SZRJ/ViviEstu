@@ -14,6 +14,6 @@ export interface UserInfo {
     // El rol del usuario (Ej: ESTUDIANTE)
     rol: string; 
     
-    // Si tienes un campo 'universidad' en la tabla, inclúyelo
-    universidad: string; 
+    fechaNacimiento?: string; 
+    correo?: string; 
 }

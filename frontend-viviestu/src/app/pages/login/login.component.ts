@@ -1,51 +1,47 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-// ¡CRÍTICO! Estos imports corrigen los errores NG8003 y NG8002
+// Imports necesarios para formularios y directivas
 import { FormsModule } from '@angular/forms'; 
-import { CommonModule } from '@angular/common'; // Necesario para *ngIf
+import { CommonModule } from '@angular/common';
 
-// Importa tus servicios y modelos (Asegúrate de que estas rutas sean correctas)
-// Si ves errores de compilación después de pegar esto, la causa es que falta uno de estos 3 archivos.
+// Servicios y Modelos
 import { UsuarioService } from '../../core/services/usuario.service';
 import { LoginRequest } from '../../core/models/login-request.model';
+// Nota: Aunque importamos LoginResponse, usaremos 'any' abajo para evitar errores si el backend cambia
 import { LoginResponse } from '../../core/models/login-response.model';
 
 @Component({
   selector: 'app-login',
-  standalone: true, 
-  // ¡CRÍTICO! Aquí se declaran los módulos para que el template reconozca ngForm, ngModel y *ngIf
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink], 
-  
   templateUrl: './login.component.html', 
   styleUrls: ['./login.component.css'] 
 })
 export class LoginComponent implements OnInit {
-  // Inyección de servicios usando la función inject()
+  
+  // Inyección de dependencias
   private usuarioService = inject(UsuarioService);
   private router = inject(Router);
 
-  // Propiedades de estado de la UI
+  // Estado de la UI
   isSubmitting = false; 
   errorMessage: string | null = null; 
 
-  // Objeto de datos del formulario (se conecta con [(ngModel)] en el HTML)
+  // Modelo de datos del formulario
   loginData: LoginRequest = {
     correo: '', 
     contrasena: '' 
   };
 
   ngOnInit(): void {
-    // Redirige al dashboard si el usuario ya está logueado
+    // Si el usuario ya está logueado, lo mandamos al Home ('/')
     if (this.usuarioService.isLoggedIn()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/']);
     }
   }
 
-  /**
-   * Maneja el envío del formulario de login.
-   */
   login(): void {
-    // Validación básica
+    // Validación simple
     if (!this.loginData.correo || !this.loginData.contrasena) {
       this.errorMessage = 'Por favor, ingrese su correo y contraseña.';
       return;
@@ -54,18 +50,44 @@ export class LoginComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = null;
 
-    // Llama a tu servicio de autenticación
     this.usuarioService.login(this.loginData).subscribe({
-      next: (response: LoginResponse) => {
-        console.log('Login exitoso, redirigiendo a /dashboard.');
-        this.router.navigate(['/dashboard']);
+      // USO DE 'any': Esto evita que la app se rompa si 'userInfo' no viene en la respuesta
+      next: (response: any) => {
+        
+        // DEBUG: Mira esto en la consola (F12) para ver qué manda realmente tu backend
+        console.log('✅ RESPUESTA RECIBIDA DEL BACKEND:', response);
+    
+        // 1. EXTRACCIÓN SEGURA DE DATOS (BLINDAJE)
+        // Intenta leer userInfo.nombre, si falla, busca response.nombre, si falla, usa el correo.
+        const nombreUsuario = response.userInfo?.nombre || response.nombre || this.loginData.correo;
+        
+        // Intenta leer el token (jwt o token)
+        const token = response.jwt || response.token;
+
+        // 2. GUARDAR EN LOCALSTORAGE
+        if (nombreUsuario) {
+            localStorage.setItem('usuarioNombre', nombreUsuario);
+        }
+        
+        if (token) {
+            localStorage.setItem('authToken', token);
+        }
+        
+        // Guardamos el ID solo si existe, usando ?. para que no de error si userInfo es null
+        if (response.userInfo?.idUsuario) {
+           localStorage.setItem('usuarioId', response.userInfo.idUsuario.toString());
+        }
+
+        // 3. REDIRIGIR AL HOME
+        console.log('Redirigiendo al Home...');
+        this.router.navigate(['/']); 
       },
       error: (error) => {
         this.isSubmitting = false;
-        // Muestra un mensaje de error si la conexión falla o las credenciales son incorrectas
-        const errorMsg = error.error?.message || 'Credenciales incorrectas. Inténtalo de nuevo.';
+        // Manejo de errores del backend
+        const errorMsg = error.error?.message || 'Credenciales incorrectas o error en el servidor.';
         this.errorMessage = errorMsg;
-        console.error('Error en el login:', error);
+        console.error('❌ Error en el login:', error);
       },
       complete: () => {
         this.isSubmitting = false; 

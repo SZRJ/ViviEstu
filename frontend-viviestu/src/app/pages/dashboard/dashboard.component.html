@@ -1,91 +1,58 @@
-<div style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: Arial, Helvetica, sans-serif;">
+<nav class="navbar">
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/" style="cursor: pointer;">ViviEstu</h1>
 
-  <h1>Panel Principal (Zonas Recomendadas)</h1>
-
-  <h3>Bienvenido, Estudiante</h3>
-  <p>
-    Este es tu panel de control. Usa los filtros para encontrar tu zona de vivienda ideal.
-  </p>
-
-  <h2>Filtros de Búsqueda y Preferencias</h2>
-
-  <!-- Presupuesto -->
-  <div style="margin-bottom: 10px;">
-    <label>Presupuesto Máximo (Soles)</label><br />
-    <input type="number" [(ngModel)]="currentPreference.precioMax" style="width: 250px;" />
+    <nav class="nav-links">
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/dashboard">Más</a>
+      <a routerLink="/nosotros">Nosotros</a>
+    </nav>
   </div>
 
-  <!-- Tiempo máximo -->
-  <div style="margin-bottom: 10px;">
-    <label>Tiempo Máximo a la Universidad (minutos)</label><br />
-    <input type="number" [(ngModel)]="currentPreference.tiempoMax" style="width: 250px;" />
+  <div class="nav-right" *ngIf="usuarioService.isLoggedIn(); else invitadoDash">
+    
+    <div class="user-menu" (click)="toggleUserMenu($event)">
+      Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
+    </div>
+
+    <div class="user-dropdown" *ngIf="showUserMenu">
+      <button (click)="irAlPerfil()">Actualizar perfil</button>
+      <button (click)="irADesactivarCuenta()">Desactivar cuenta</button>
+      <hr>
+      <button (click)="logout()">Cerrar sesión</button>
+    </div>
+
   </div>
 
-  <!-- Nivel de seguridad -->
-  <div style="margin-bottom: 10px;">
-    <label>Nivel de Seguridad Preferido</label><br />
-    <select [(ngModel)]="currentPreference.nivelSeguridad" style="width: 250px;">
-      <option value="">Seleccione…</option>
-      <option value="Bajo">Bajo</option>
-      <option value="Medio">Medio</option>
-      <option value="Alto">Alto</option>
-    </select>
-  </div>
+  <ng-template #invitadoDash>
+    <div class="nav-right">
+      <button class="btn-login" routerLink="/login">Iniciar sesión</button>
+    </div>
+  </ng-template>
+</nav>
 
-  <!-- Transporte -->
-  <div style="margin-bottom: 10px;">
-    <label>Transporte Mínimo Requerido</label><br />
-    <select [(ngModel)]="currentPreference.transporte" style="width: 250px;">
-      <option value="">Seleccione…</option>
-      <option value="Bus">Autobús / Microbús</option>
-      <option value="Metro">Metro</option>
-      <option value="Taxi">Taxi</option>
-    </select>
-  </div>
 
-  <!-- Universidad -->
-  <div style="margin-bottom: 10px;">
-    <label>Universidad de Destino</label><br />
-    <select [(ngModel)]="currentPreference.universidad" style="width: 250px;">
-      <option value="">Seleccione…</option>
-      <option value="UNMSM">UNMSM</option>
-      <option value="UNI">UNI</option>
-      <option value="PUCP">PUCP</option>
-    </select>
-  </div>
+<div class="dashboard-container">
+  <h1>Panel de Control</h1>
+  <p>¿Qué deseas hacer hoy?</p>
 
-  <!-- BOTONES -->
-  <div style="margin-top: 15px;">
-    <button (click)="getZonasByPreferences()">Buscar Zonas por Preferencia</button>
-    <button (click)="savePreference()">Guardar Preferencia</button>
-  </div>
+  <div class="grid-actions">
+    <div class="action-card" routerLink="/zonas">
+      <div class="icon">🏙️</div>
+      <h3>Explorar Zonas</h3>
+      <p>Busca alojamiento cerca de tu universidad.</p>
+    </div>
 
-  <hr style="margin: 30px 0;" />
+    <div class="action-card" routerLink="/profile">
+      <div class="icon">👤</div>
+      <h3>Mi Perfil</h3>
+      <p>Gestiona tus preferencias y cuenta.</p>
+    </div>
 
-  <h2>Zonas Encontradas</h2>
-
-  <!-- Loading -->
-  <div *ngIf="isLoading">
-    Cargando...
-  </div>
-
-  <!-- Mensaje cuando no hay zonas -->
-  <div *ngIf="zonas.length === 0 && !isLoading">
-    No se encontraron zonas que coincidan con los filtros.<br /><br />
-    Ajusta tu presupuesto, tiempo de viaje o nivel de seguridad.
-  </div>
-
-  <!-- Lista de zonas -->
-  <div *ngIf="zonas.length > 0">
-    <div *ngFor="let zona of zonas" style="margin-bottom: 20px;">
-      <h3>{{ zona.nombreZona }}</h3>
-      <p><strong>Dirección:</strong> {{ zona.direccion }}</p>
-      <p><strong>Precio:</strong> {{ zona.precio }} soles</p>
-      <p><strong>Distancia:</strong> {{ zona.distancia }} km</p>
-
-      <a [routerLink]="['/zona', zona.idZona]">Ver detalles</a>
-      <hr />
+    <div class="action-card disabled">
+      <div class="icon">⭐</div>
+      <h3>Mis Favoritos</h3>
+      <p>Próximamente...</p>
     </div>
   </div>
-
 </div>
