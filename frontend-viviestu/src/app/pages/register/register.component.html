@@ -58,18 +58,29 @@
           {{ isSubmitting ? 'Registrando...' : 'REGISTRARSE' }}
         </button>
 
-      </form> </div> </div> <div class="modal-overlay" *ngIf="showSuccessModal">
-    <div class="modal-box">
-      <div class="icon-check">✓</div>
-      
-      <h3>¡Registro Exitoso!</h3>
-      <p>Tu cuenta ha sido creada correctamente.</p>
-      <p>Ahora puedes ingresar con tus credenciales.</p>
-      
-      <button class="btn-modal" (click)="irALogin()">
-        Ir a Iniciar Sesión
-      </button>
+      </form>
     </div>
   </div>
 
+  <div class="modal-overlay" *ngIf="showSuccessModal">
+    <div class="modal-box">
+      <div class="icon-check" style="font-size: 40px;">📧</div>
+      
+      <h3>¡Registro casi listo!</h3>
+      
+      <p style="margin: 10px 0; color: #555;">
+        Hemos enviado un correo de confirmación a: <br>
+        <b>{{ registroData.correo }}</b>
+      </p>
+      
+      <p style="font-size: 13px; color: #888;">
+        (Como es una demo, usa el botón de abajo para simular la verificación)
+      </p>
+      
+      <button class="btn-modal" (click)="simularVerificacion()" [disabled]="isVerifying">
+        {{ isVerifying ? 'Verificando...' : 'Simular verificación de correo' }}
+      </button>
+
+    </div>
+  </div>
 </div>
