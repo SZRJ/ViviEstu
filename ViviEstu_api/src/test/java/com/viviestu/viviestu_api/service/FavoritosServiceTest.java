@@ -71,3 +71,4 @@ public class FavoritosServiceTest {
         verify(repository).findById(2L);
     }
 }
+ 
