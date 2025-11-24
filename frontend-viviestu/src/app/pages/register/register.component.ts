@@ -21,6 +21,7 @@ export class RegisterComponent {
   isSubmitting = false;
   errorMessage: string | null = null;
   showSuccessModal = false; 
+  idRegistrado: number | null = null;
 
   registroData: RegistroRequest = {
     nombre: '',
@@ -31,6 +32,7 @@ export class RegisterComponent {
   };
 
   repetirContrasena: string = '';
+  isVerifying = false;
 
   onRegister(): void {
     // Validaciones
@@ -50,23 +52,52 @@ export class RegisterComponent {
     console.log('Enviando datos...', this.registroData);
 
     this.usuarioService.registrar(this.registroData).subscribe({
-      next: (response) => {
-        console.log('✅ COMPONENTE: Respuesta recibida', response);
-        
-        // 1. Detener la carga
+      next: (response: any) => {
         this.isSubmitting = false;
         
-        // 2. Mostrar el modal
-        this.showSuccessModal = true;
-
-        // 3. FORZAR ACTUALIZACIÓN DE LA PANTALLA (El truco)
-        this.cd.detectChanges(); 
+        // 1. CAPTURAMOS EL ID DEL BACKEND
+        // Dependiendo de cómo responda tu backend, el ID puede venir en 'data' o directo.
+        const usuarioCreado = response.data || response; 
+        
+        if (usuarioCreado && (usuarioCreado.idUsuario || usuarioCreado.id)) {
+             this.idRegistrado = usuarioCreado.idUsuario || usuarioCreado.id;
+             
+             // 2. MOSTRAMOS EL MODAL (Ahora será el de "Verificación pendiente")
+             this.showSuccessModal = true;
+             this.cd.detectChanges();
+        } else {
+             this.errorMessage = "Usuario creado, pero no se recibió el ID para verificar.";
+        }
       },
       error: (error) => {
         this.isSubmitting = false;
-        console.error('❌ Error:', error);
         this.errorMessage = error.error?.message || 'Error al registrar.';
-        this.cd.detectChanges(); // Forzar actualización en error también
+        this.cd.detectChanges();
+      }
+    });
+  }
+
+  simularVerificacion() {
+    // Verificamos que tengamos un ID guardado
+    if (!this.idRegistrado) {
+      console.error('No hay ID registrado para verificar');
+      return;
+    }
+
+    this.isVerifying = true;
+
+    // Llamamos al servicio para activar la cuenta
+    this.usuarioService.verificarCuenta(this.idRegistrado).subscribe({
+      next: () => {
+        // Si todo sale bien:
+        alert('¡Cuenta verificada con éxito! Ahora puedes iniciar sesión.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        // Si falla:
+        console.error(err);
+        alert('Error al verificar. Intenta de nuevo.');
+        this.isVerifying = false;
       }
     });
   }
@@ -74,4 +105,5 @@ export class RegisterComponent {
   irALogin(): void {
     this.router.navigate(['/login']);
   }
+
 }
