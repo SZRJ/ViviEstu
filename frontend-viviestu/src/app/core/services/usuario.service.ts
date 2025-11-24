@@ -47,6 +47,11 @@ export class UsuarioService {
     return !!this.token();
   }
 
+  verificarCuenta(idUsuario: number): Observable<any> {
+  // Esto hará la petición GET a: api/usuarios/verificar/{id}
+  return this.http.get<any>(`${this.API_USUARIOS}/verificar/${idUsuario}`);
+  }
+
   // --- HELPER: CABECERAS CON TOKEN ---
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
