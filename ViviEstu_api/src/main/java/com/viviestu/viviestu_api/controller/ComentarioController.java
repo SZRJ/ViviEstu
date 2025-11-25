@@ -16,6 +16,14 @@ public class ComentarioController {
     @Autowired
     private ComentarioService comentarioService;
 
+    @GetMapping("/{id}/comentarios")
+    public ResponseEntity<?> listarComentarios(
+            @PathVariable("id") Integer zonaId,
+            @RequestParam(required = false, defaultValue = "10") Integer limit
+    ) {
+        return ResponseEntity.ok(comentarioService.listarPorZona(zonaId, limit));
+    }
+
     @PostMapping("/{id}/comentarios")
     public ResponseEntity<?> agregarComentario(@PathVariable("id") Integer zonaId, @RequestBody ComentarioRequest request) {
         try {
