@@ -1,44 +1,146 @@
-<div class="detail-page" *ngIf="zona">
+<nav class="navbar">
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/dashboard" style="cursor: pointer;">ViviEstu</h1>
+    
+    <nav class="nav-links">
+      <a routerLink="/dashboard">Inicio</a>
+      <a routerLink="/zonas">Zonas</a>
+      <a routerLink="/nosotros">Nosotros</a>
+    </nav>
+  </div>
+
+  <div class="nav-right" *ngIf="usuarioService.isLoggedIn(); else invitadoNav">
+    
+    <div class="user-menu" (click)="toggleUserMenu($event)">
+      Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
+    </div>
+
+    <div class="user-dropdown" *ngIf="showUserMenu">
+      <button (click)="irAlPerfil()">Actualizar perfil</button>
+      <button (click)="irADesactivarCuenta()">Configuración de cuenta</button>
+      <hr>
+      <button (click)="logout()">Cerrar sesión</button>
+    </div>
+
+  </div>
+
+  <ng-template #invitadoNav>
+    <div class="nav-right">
+      <a routerLink="/login" class="btn-login-nav">Iniciar Sesión</a>
+    </div>
+  </ng-template>
+</nav>
+
+<div class="container-volver">
+  <a routerLink="/zonas" class="link-volver">← Volver al listado de zonas</a>
+</div>
+
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Cargando información...</p>
+</div>
+
+
+<div class="detail-page" *ngIf="!loading && zona">
   
   <div class="header-zona">
-    <button routerLink="/zonas" class="btn-back">← Volver</button>
-    <h1>Zona: {{ zona.nombre }}</h1>
-    <div class="icons">🔔 👤</div>
+    <h1>{{ zona.nombre }}</h1>
+    <span class="badge" [ngClass]="{'alta': zona.seguridad === 'ALTA', 'media': zona.seguridad === 'MEDIA'}">
+      Seguridad: {{ zona.seguridad }}
+    </span>
   </div>
 
   <div class="gallery">
-    <img [src]="getImagenRandom(zona.idZona, 1)" class="img-main">
-    <img [src]="getImagenRandom(zona.idZona, 2)" class="img-secondary">
+    <img [src]="getImagenRandom(zona.idZona, 10)" class="img-main">
+    <div class="gallery-side">
+        <img [src]="getImagenRandom(zona.idZona, 20)" class="img-small">
+        <img [src]="getImagenRandom(zona.idZona, 30)" class="img-small">
+    </div>
   </div>
 
-  <div class="info-panel">
-    <div class="stat">
-        <label>Precio Promedio</label>
-        <span>S/. {{ zona.precioPromedio }}</span>
+  <div class="info-grid">
+    <div class="info-card precio">
+      <div class="icon">💰</div>
+      <h3>Precio Promedio</h3>
+      <p class="big-text">S/. {{ zona.precioPromedio }}</p>
+      <small>mensual aprox.</small>
     </div>
-    <div class="stat">
-        <label>Seguridad</label>
-        <span>{{ zona.seguridad }}</span>
+
+    <div class="info-card transporte">
+      <div class="icon">🚌</div>
+      <h3>Transporte</h3>
+      <p>{{ zona.transporteDisponible }}</p>
     </div>
-    <div class="stat">
-        <label>Transporte</label>
-        <span>{{ zona.transporteDisponible }}</span>
+
+    <div class="info-card seguridad">
+      <div class="icon">👮</div>
+      <h3>Seguridad</h3>
+      <p>{{ zona.seguridad }}</p>
     </div>
+  </div>
+
+  <div class="rating-section">
+    <h3>¿Qué tal te parece esta zona?</h3>
+    
+    <div class="stars" [class.disabled]="enviandoCalificacion">
+      <span 
+        *ngFor="let s of [1,2,3,4,5]" 
+        (click)="!enviandoCalificacion && calificar(s)"
+        [class.filled]="s <= puntuacionSeleccionada"
+        title="Calificar con {{s}} estrellas">
+        ★
+      </span>
+    </div>
+    
+    <p *ngIf="mensajeCalificacion" class="success-msg">{{ mensajeCalificacion }}</p>
   </div>
 
   <div class="comments-section">
-    <h3>Comentarios:</h3>
+    <h3>💬 Opiniones de estudiantes</h3>
+    
     <div class="comment-box">
-      <input type="text" placeholder="Insertar comentario..." disabled>
+      <input 
+        type="text" 
+        [(ngModel)]="nuevoComentario" 
+        placeholder="¿Qué opinas de esta zona? Escribe aquí..."
+        [disabled]="enviandoComentario"
+        (keyup.enter)="publicarComentario()">
+      
+      <button 
+        class="btn-send" 
+        (click)="publicarComentario()" 
+        [disabled]="!nuevoComentario.trim() || enviandoComentario">
+        Enviar
+      </button>
     </div>
 
-    <div class="user-comment">
-      <div class="avatar">👤</div>
-      <div class="text">
-        <strong>User123</strong>
-        <p>Zona bastante segura y tranquila, solo que algo cara para vivir.</p>
+    <div class="lista-comentarios">
+      
+      <div class="user-comment">
+        <div class="avatar">👤</div>
+        <div class="comment-content">
+          <div class="comment-header">
+            <strong>User123</strong>
+            <span class="fecha">Hace unos días</span>
+          </div>
+          <p>Zona bastante segura y tranquila, solo que algo cara para vivir.</p>
+        </div>
       </div>
+
+      <div class="user-comment" *ngFor="let c of comentarios">
+        <div class="avatar">👤</div>
+        <div class="comment-content">
+          <div class="comment-header">
+            <strong>{{ c.nombreUsuario }}</strong>
+            <span class="fecha">{{ c.fecha | date:'shortDate' }}</span>
+          </div>
+          <p>{{ c.comentario }}</p>
+        </div>
+      </div>
+
     </div>
-  </div>
+
+</div>
 
 </div>
