@@ -15,10 +15,6 @@
     <div class="login-card">
       <h2>Iniciar Sesión</h2>
       
-      <div *ngIf="errorMessage" class="alert-error">
-        {{ errorMessage }}
-      </div>
-
       <form (ngSubmit)="login()">
         
         <div class="form-group">
@@ -47,14 +43,15 @@
           >
         </div>
 
-        <button 
-          type="submit" 
-          class="btn-primary" 
-          [disabled]="isSubmitting"
-          [class.disabled]="isSubmitting"
-        >
-          {{ isSubmitting ? 'Cargando...' : 'INICIAR SESIÓN' }}
-        </button>
+        <div *ngIf="errorMessage" class="alert-error" style="color: #dc2626; background: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #dc2626; text-align: center;">
+    {{ errorMessage }}
+</div>
+
+<button 
+  type="submit" 
+  class="btn-primary" 
+  [disabled]="isSubmitting"> {{ isSubmitting ? 'Cargando...' : 'INICIAR SESIÓN' }}
+</button>
 
         <div class="forgot-password">
           <span>¿Olvidaste tu contraseña? </span>

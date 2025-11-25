@@ -1,47 +1,39 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Importar ChangeDetectorRef
 import { Router, RouterLink } from '@angular/router';
-// Imports necesarios para formularios y directivas
 import { FormsModule } from '@angular/forms'; 
 import { CommonModule } from '@angular/common';
 
-// Servicios y Modelos
 import { UsuarioService } from '../../core/services/usuario.service';
 import { LoginRequest } from '../../core/models/login-request.model';
-// Nota: Aunque importamos LoginResponse, usaremos 'any' abajo para evitar errores si el backend cambia
-import { LoginResponse } from '../../core/models/login-response.model';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink], 
-  templateUrl: './login.component.html', 
-  styleUrls: ['./login.component.css'] 
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
   
-  // Inyección de dependencias
   private usuarioService = inject(UsuarioService);
   private router = inject(Router);
+  private cd = inject(ChangeDetectorRef); // <--- 2. Inyectar el detector
 
-  // Estado de la UI
   isSubmitting = false; 
   errorMessage: string | null = null; 
 
-  // Modelo de datos del formulario
   loginData: LoginRequest = {
     correo: '', 
     contrasena: '' 
   };
 
   ngOnInit(): void {
-    // Si el usuario ya está logueado, lo mandamos al Home ('/')
     if (this.usuarioService.isLoggedIn()) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/dashboard']);
     }
   }
 
   login(): void {
-    // Validación simple
     if (!this.loginData.correo || !this.loginData.contrasena) {
       this.errorMessage = 'Por favor, ingrese su correo y contraseña.';
       return;
@@ -51,46 +43,39 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null;
 
     this.usuarioService.login(this.loginData).subscribe({
-      // USO DE 'any': Esto evita que la app se rompa si 'userInfo' no viene en la respuesta
       next: (response: any) => {
-        
-        // DEBUG: Mira esto en la consola (F12) para ver qué manda realmente tu backend
-        console.log('✅ RESPUESTA RECIBIDA DEL BACKEND:', response);
+        console.log('✅ LOGIN EXITOSO:', response);
     
-        // 1. EXTRACCIÓN SEGURA DE DATOS (BLINDAJE)
-        // Intenta leer userInfo.nombre, si falla, busca response.nombre, si falla, usa el correo.
-        const nombreUsuario = response.userInfo?.nombre || response.nombre || this.loginData.correo;
+        // Lógica de extracción de datos (Blindada)
+        const datosReales = response.data || response;
+        const token = datosReales.jwt || datosReales.token;
         
-        // Intenta leer el token (jwt o token)
-        const token = response.jwt || response.token;
+        if (token) localStorage.setItem('auth_token', token);
 
-        // 2. GUARDAR EN LOCALSTORAGE
-        if (nombreUsuario) {
-            localStorage.setItem('usuarioNombre', nombreUsuario);
-        }
+        const info = datosReales.userInfo || datosReales.usuario || datosReales;
+        localStorage.setItem('user_info', JSON.stringify(info));
         
-        if (token) {
-            localStorage.setItem('authToken', token);
-        }
+        const idUsuario = info.idUsuario || info.id;
+        if (idUsuario) localStorage.setItem('usuarioId', idUsuario.toString());
         
-        // Guardamos el ID solo si existe, usando ?. para que no de error si userInfo es null
-        if (response.userInfo?.idUsuario) {
-           localStorage.setItem('usuarioId', response.userInfo.idUsuario.toString());
-        }
+        const nombreUsuario = info.nombre || info.nombreUsuario || this.loginData.correo;
+        localStorage.setItem('usuarioNombre', nombreUsuario);
 
-        // 3. REDIRIGIR AL HOME
-        console.log('Redirigiendo al Home...');
-        this.router.navigate(['/']); 
+        this.router.navigate(['/dashboard']); 
       },
-      error: (error) => {
-        this.isSubmitting = false;
-        // Manejo de errores del backend
-        const errorMsg = error.error?.message || 'Credenciales incorrectas o error en el servidor.';
-        this.errorMessage = errorMsg;
-        console.error('❌ Error en el login:', error);
-      },
-      complete: () => {
-        this.isSubmitting = false; 
+      error: (err) => {
+        console.error('❌ Error detectado:', err);
+
+        // 3. LOGICA DE RECUPERACIÓN
+        this.isSubmitting = false; // Desbloquear botón
+        this.loginData.contrasena = ''; // Limpiar contraseña
+        
+        // Extraer mensaje del backend (Soporta message o mensaje)
+        const msgBackend = err.error?.message || err.error?.mensaje;
+        this.errorMessage = msgBackend || 'Credenciales incorrectas. Inténtalo de nuevo.';
+        
+        // 4. ¡DESPERTAR A ANGULAR!
+        this.cd.detectChanges(); 
       }
     });
   }

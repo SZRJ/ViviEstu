@@ -130,18 +130,36 @@ export class ZonaDetailComponent implements OnInit {
 
   calificar(puntos: number) {
     this.puntuacionSeleccionada = puntos;
-    if (!this.usuarioService.isLoggedIn()) { alert('Inicia sesión'); return; }
-    const idUsuario = parseInt(localStorage.getItem('usuarioId') || '0');
 
-    if (this.zona) {
+    if (!this.usuarioService.isLoggedIn()) {
+      alert('Inicia sesión para calificar.');
+      return;
+    }
+
+    const idUsuarioStr = localStorage.getItem('usuarioId');
+    const idUsuario = idUsuarioStr ? parseInt(idUsuarioStr) : 0;
+
+    if (this.zona && idUsuario > 0) {
       this.enviandoCalificacion = true;
+      // Mensaje temporal mientras carga
+      this.mensajeCalificacion = `Enviando ${puntos} estrellas...`;
+
       this.zonaService.calificarZona(this.zona.idZona, idUsuario, puntos).subscribe({
-        next: () => {
-          this.mensajeCalificacion = '¡Gracias por tu calificación!';
+        next: (resp) => {
+          console.log('Calificación guardada:', resp);
+          
+          // >>> CAMBIO AQUÍ: Mensaje personalizado <<<
+          this.mensajeCalificacion = `¡Gracias! Has calificado con ${puntos} estrellas.`;
+          
           this.enviandoCalificacion = false;
           this.cd.detectChanges();
         },
-        error: () => { this.enviandoCalificacion = false; }
+        error: (err) => {
+          console.error('Error al calificar:', err);
+          this.mensajeCalificacion = 'Error al guardar la calificación. Intenta luego.';
+          this.enviandoCalificacion = false;
+          this.cd.detectChanges();
+        }
       });
     }
   }
