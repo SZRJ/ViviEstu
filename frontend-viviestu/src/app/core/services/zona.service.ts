@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { Zona } from '../models/zona.model'; // Asegúrate de tener tu modelo Zona creado
+import { Zona } from '../models/zona.model';
 
 import { environment } from '../../../environments/environment';
 
@@ -21,9 +21,7 @@ export class ZonaService {
     });
   }
 
- 
 
-  // 2. OBTENER POR ID (GET /api/zonas/{id})
   obtenerPorId(id: number): Observable<Zona> {
     return this.http.get<ApiResponse<Zona>>(`${this.API_URL}/${id}`, { headers: this.getAuthHeaders() })
       .pipe(map(resp => resp.data));
@@ -37,8 +35,7 @@ export class ZonaService {
         return Array.isArray(lista) ? lista : [];
       }));
   }
-  
-  // Haz lo mismo con listarRecomendadas si puedes
+
   listarRecomendadas(idUsuario: number): Observable<Zona[]> {
     const url = `${this.API_URL}/recomendadas?idUsuario=${idUsuario}`;
     return this.http.get<any>(url, { headers: this.getAuthHeaders() })
@@ -46,5 +43,32 @@ export class ZonaService {
          const lista = response.data || response;
          return Array.isArray(lista) ? lista : [];
       }));
+  }
+
+  // OBTENER COMENTARIOS DE UNA ZONA
+  obtenerComentarios(idZona: number): Observable<any[]> {
+    const url = `${this.API_URL}/${idZona}/comentarios`;
+    return this.http.get<any>(url, { headers: this.getAuthHeaders() });
+  }
+
+  //ENVIAR UN NUEVO COMENTARIO
+  enviarComentario(idZona: number, idUsuario: number, texto: string): Observable<any> {
+    const url = `${this.API_URL}/${idZona}/comentarios`;
+    const body = {
+      idUsuario: idUsuario,
+      comentario: texto
+    };
+    return this.http.post<any>(url, body, { headers: this.getAuthHeaders() });
+  }
+
+  calificarZona(idZona: number, idUsuario: number, puntuacion: number): Observable<any> {
+    const url = `${this.API_URL}/${idZona}/calificaciones`;
+    
+    const body = { 
+      idUsuario: idUsuario, 
+      puntuacion: puntuacion 
+    };
+    
+    return this.http.post<any>(url, body, { headers: this.getAuthHeaders() });
   }
 }
