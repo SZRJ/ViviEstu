@@ -133,3 +133,85 @@
   font-weight: bold;
   margin-top: 10px;
 }
+/* Contenedor para alinear título y botón */
+.titulo-con-boton {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Estilo base del botón */
+.btn-recomendar {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-recomendar:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+/* ESTADO ACTIVO (Cuando zona.recomendado es true) */
+.btn-recomendar.activo {
+    background-color: #84dcc6; /* Tu color verde menta */
+    border-color: #84dcc6;
+    color: #004d33; /* Texto verde oscuro */
+    box-shadow: 0 2px 8px rgba(132, 220, 198, 0.4);
+}
+
+.btn-recomendar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* ... (estilos anteriores) ... */
+
+/* TRANSPORTE CARD */
+.transporte-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.transporte-card h3 { margin-top: 0; margin-bottom: 20px; font-size: 18px; }
+
+.transporte-controls {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.t-group { flex: 1; min-width: 150px; }
+.t-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; font-weight: 600; }
+.t-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+
+.btn-calc-t {
+  background: #191a20; color: white; border: none; padding: 11px 25px; 
+  border-radius: 8px; cursor: pointer; font-weight: bold; height: 42px;
+}
+.btn-calc-t:hover { background: #333; }
+
+.t-result {
+  margin-top: 20px;
+  background: #e0fbf4;
+  color: #006644;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  animation: fadeIn 0.5s;
+}

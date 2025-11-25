@@ -1,0 +1,51 @@
+<nav class="navbar">
+  <div class="logo" routerLink="/dashboard">ViviEstu</div>
+  <div class="nav-actions">
+    <span class="user-name">Hola, {{ usuarioNombre }}</span>
+    <button (click)="cerrarSesion()" class="btn-logout">Salir</button>
+  </div>
+</nav>
+
+<div class="container">
+  
+  <div class="header-content">
+    <button routerLink="/dashboard" class="btn-back">← Volver al Dashboard</button>
+    <h2>❤️ Mis Zonas Favoritas</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando tus favoritos...</p>
+  </div>
+
+  <div *ngIf="!loading && favoritos.length === 0" class="empty-state">
+    <div class="icon-empty">💔</div>
+    <h3>Aún no tienes favoritos guardados</h3>
+    <p>Explora las zonas disponibles y marca las que te interesen.</p>
+    <button routerLink="/zonas" class="btn-explore">
+        Ir a Explorar Zonas
+    </button>
+  </div>
+
+  <div class="zonas-grid" *ngIf="!loading && favoritos.length > 0">
+    <div class="zona-card" *ngFor="let fav of favoritos" [routerLink]="['/zonas', fav.idZona]">
+      <div class="image-container">
+        <img [src]="getImagenRandom(fav.idZona)" alt="Foto zona">
+        <button class="btn-fav is-fav" (click)="quitarFavorito($event, fav.idZona)">
+          ❤️
+        </button>
+      </div>
+      <div class="card-content">
+        <h3>{{ fav.nombreZona }}</h3>
+        <div class="tags">
+            <span class="badge" [class.alta]="fav.seguridad === 'ALTA'">Seg: {{ fav.seguridad }}</span>
+        </div>
+        <div class="price">
+          <span class="label">Promedio:</span>
+          <span class="amount">S/. {{ fav.precioPromedio }}</span>
+        </div>
+        <button class="btn-ver">Ver Detalles</button>
+      </div>
+    </div>
+  </div>
+</div>

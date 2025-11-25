@@ -9,4 +9,7 @@ export interface Zona {
     
     // Propiedad opcional para mostrar los comentarios, aunque no la carguemos ahora
     comentarios?: any[];
+    // Agrega estos opcionales para el frontend:
+    esFavorito?: boolean; 
+    promedioCalificacion?: number;
 }

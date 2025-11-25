@@ -1,58 +1,95 @@
-<nav class="navbar">
-  <div class="nav-left">
-    <h1 class="logo-text" routerLink="/" style="cursor: pointer;">ViviEstu</h1>
-
-    <nav class="nav-links">
-      <a routerLink="/">Inicio</a>
-      <a routerLink="/dashboard">Más</a>
-      <a routerLink="/nosotros">Nosotros</a>
-    </nav>
-  </div>
-
-  <div class="nav-right" *ngIf="usuarioService.isLoggedIn(); else invitadoDash">
+<div class="dashboard-wrapper" (click)="closeMenu()">
+  
+  <nav class="navbar">
+    <div class="logo" routerLink="/dashboard" style="cursor: pointer;">
+      ViviEstu
+    </div>
     
-    <div class="user-menu" (click)="toggleUserMenu($event)">
-      Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
-    </div>
-
-    <div class="user-dropdown" *ngIf="showUserMenu">
-      <button (click)="irAlPerfil()">Actualizar perfil</button>
-      <button (click)="irADesactivarCuenta()">Desactivar cuenta</button>
-      <hr>
-      <button (click)="logout()">Cerrar sesión</button>
-    </div>
-
-  </div>
-
-  <ng-template #invitadoDash>
     <div class="nav-right">
-      <button class="btn-login" routerLink="/login">Iniciar sesión</button>
+      
+      <div class="notif-wrapper" (click)="toggleNotifMenu($event)">
+        <div class="bell-icon">
+          🔔
+          <span class="badge-count" *ngIf="numNotificaciones > 0">{{ numNotificaciones }}</span>
+        </div>
+
+        <div class="notif-dropdown" *ngIf="showNotifMenu">
+          
+          <div *ngIf="numNotificaciones > 0" class="notif-item" (click)="irANotificacion()">
+             <div class="icon-n">✨</div>
+             <div class="text-n">
+               <strong>¡Recomendaciones listas!</strong>
+               <p>Encontramos {{ numNotificaciones }} zonas para ti.</p>
+             </div>
+          </div>
+
+          <div *ngIf="numNotificaciones === 0" class="notif-empty">
+             <p>No hay novedades por ahora.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-logged-in">
+        <div class="user-menu" (click)="toggleUserMenu($event)">
+          Hola, <b>{{ usuarioNombre }}</b> <span class="chevron">▾</span>
+        </div>
+
+        <div class="user-dropdown" *ngIf="showUserMenu">
+          <button (click)="irAlPerfil()">Actualizar perfil</button>
+          <button (click)="irADesactivarCuenta()">Configuración de cuenta</button>
+          <hr>
+          <button (click)="logout()" class="btn-logout-item">Cerrar sesión</button>
+        </div>
+      </div>
+
     </div>
-  </ng-template>
-</nav>
+  </nav>
 
-
-<div class="dashboard-container">
-  <h1>Panel de Control</h1>
-  <p>¿Qué deseas hacer hoy?</p>
-
-  <div class="grid-actions">
-    <div class="action-card" routerLink="/zonas">
-      <div class="icon">🏙️</div>
-      <h3>Explorar Zonas</h3>
-      <p>Busca alojamiento cerca de tu universidad.</p>
+  <div class="dashboard-container">
+    
+    <div class="welcome-section">
+      <h1>Panel de Control</h1>
+      <p>Gestiona tu búsqueda de vivienda desde aquí</p>
     </div>
 
-    <div class="action-card" routerLink="/profile">
-      <div class="icon">👤</div>
-      <h3>Mi Perfil</h3>
-      <p>Gestiona tus preferencias y cuenta.</p>
-    </div>
+    <div class="grid-actions">
+      
+      <div class="action-card primary" routerLink="/zonas">
+        <div class="icon">🏙️</div>
+        <div class="info">
+          <h3>Explorar Zonas</h3>
+          <p>Busca alojamiento cerca de tu universidad.</p>
+          
+          <div class="mini-stat" *ngIf="resumen?.totalComentarios > 0">
+            Has hecho <b>{{ resumen?.totalComentarios }}</b> aportes.
+          </div>
+        </div>
+      </div>
 
-    <div class="action-card disabled">
-      <div class="icon">⭐</div>
-      <h3>Mis Favoritos</h3>
-      <p>Próximamente...</p>
+      <div class="action-card favorite" routerLink="/favoritos">
+        <div class="icon">❤️</div>
+        <div class="info">
+          <h3>Mis Favoritos</h3>
+          <p>Tienes <b>{{ resumen?.totalFavoritos || 0 }}</b> zonas guardadas.</p>
+        </div>
+      </div>
+
+      <div class="action-card" routerLink="/profile">
+        <div class="icon">👤</div>
+        <div class="info">
+          <h3>Mi Perfil</h3>
+          <p>Actualiza tus datos personales.</p>
+        </div>
+      </div>
+
+      <div class="action-card simulator" routerLink="/simulador">
+        <div class="icon">🧮</div>
+        <div class="info">
+          <h3>Simulador de Gastos</h3>
+          <p>Calcula tu presupuesto mensual.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

@@ -10,6 +10,7 @@ import com.viviestu.viviestu_api.repository.UsuarioRepository;
 import com.viviestu.viviestu_api.repository.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,9 +62,12 @@ public class FavoritoService {
         );
     }
 
-    /// Lista todas las zonas favoritas de un usuario
+    // 2. AGREGAR ESTA ANOTACIÓN
+    @Transactional(readOnly = true)
     public List<FavoritoResponse> listarFavoritos(Long idUsuario) {
         List<Favorito> favoritos = favoritoRepository.findByUsuarioIdUsuario(idUsuario);
+
+        // Aquí es donde fallaba al intentar leer getZona() sin transacción
         return favoritos.stream().map(f ->
                 new FavoritoResponse(
                         f.getIdFavorito(),

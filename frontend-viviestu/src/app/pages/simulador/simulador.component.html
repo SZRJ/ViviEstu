@@ -1,0 +1,52 @@
+<nav class="navbar">
+  <div class="logo" routerLink="/dashboard">ViviEstu</div>
+  <button routerLink="/dashboard" class="btn-back">Volver</button>
+</nav>
+
+<div class="container">
+  <h2>🧮 Simulador de Gastos</h2>
+  <p class="subtitle">Proyecta tu presupuesto mensual</p>
+
+  <div class="calculator-card">
+    
+    <div class="form-group" *ngIf="misFavoritos.length > 0">
+      <label class="highlight-label">✨ Usa el precio de un Favorito:</label>
+      <select 
+        [(ngModel)]="favoritoSeleccionado" 
+        (change)="onSeleccionarFavorito()"
+        class="select-fav">
+        <option [ngValue]="null">-- Selecciona una zona guardada --</option>
+        <option *ngFor="let fav of misFavoritos" [value]="fav.idZona">
+          {{ fav.nombreZona }} (S/. {{ fav.precioPromedio }})
+        </option>
+      </select>
+    </div>
+
+    <div class="divider" *ngIf="misFavoritos.length > 0"><span>O ingrésalo manualmente</span></div>
+
+    <div class="form-group">
+      <label>Costo de Alquiler (S/.)</label>
+      <input type="number" [(ngModel)]="alquiler" placeholder="Ej: 800">
+    </div>
+
+    <div class="form-group">
+      <label>Gasto mensual en Transporte (S/.)</label>
+      <input type="number" [(ngModel)]="transporte" placeholder="Ej: 150 (Opcional)">
+    </div>
+
+    <button (click)="calcular()" class="btn-calc" [disabled]="loading">
+      {{ loading ? 'Calculando...' : 'Calcular Total' }}
+    </button>
+
+    <div *ngIf="resultado" class="result-box">
+      <h3>Tu Gasto Mensual Estimado</h3>
+      <div class="total">S/. {{ resultado.gastoTotal }}</div>
+      
+      <div class="breakdown">
+        <span>🏠 Alquiler: S/. {{ resultado.alquiler }}</span>
+        <span>🚌 Transporte: S/. {{ resultado.transporte }}</span>
+      </div>
+    </div>
+
+  </div>
+</div>

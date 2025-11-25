@@ -16,7 +16,10 @@ import { EditProfileComponent } from './pages/edit-profile/edit-profile.componen
 
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ZonaListComponent } from './pages/zona-list/zona-list.component';
-import { ZonaDetailComponent } from './pages/zona-detail/zona-detail.component'; // Crearemos este luego
+import { ZonaDetailComponent } from './pages/zona-detail/zona-detail.component'; 
+
+import { MisFavoritosComponent } from './pages/favoritos/mis-favoritos.component'; 
+import { SimuladorComponent } from './pages/simulador/simulador.component';
 
 const authGuard: CanActivateFn = () => {
     const usuarioService = inject(UsuarioService);
@@ -62,7 +65,9 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent }, // Panel principal
     { path: 'editar-perfil', component: EditProfileComponent },
     { path: 'zonas', component: ZonaListComponent },      // Listado general
-    { path: 'zonas/:id', component: ZonaDetailComponent }, // Detalle (Mockup)
+    { path: 'zonas/:id', component: ZonaDetailComponent },
+    { path: 'favoritos', component: MisFavoritosComponent },
+    { path: 'simulador', component: SimuladorComponent },
 
     // Wildcard: Cualquier ruta desconocida devuelve al Home
     { path: '**', redirectTo: '' }

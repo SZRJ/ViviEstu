@@ -15,7 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class FavoritosController {
 
-	private final FavoritosService service;
+	/*private final FavoritosService service;
 
 	@Autowired
 	public FavoritosController(FavoritosService service) {
@@ -48,5 +48,5 @@ public class FavoritosController {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	}
+	}*/
 }

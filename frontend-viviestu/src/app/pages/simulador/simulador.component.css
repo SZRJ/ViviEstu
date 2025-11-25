@@ -1,0 +1,31 @@
+/* ... (Mantén tus estilos anteriores del navbar y container) ... */
+.navbar { background: #d1fef2; height: 70px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-weight: bold; font-size: 24px; cursor: pointer; }
+.btn-back { border: 1px solid #333; background: transparent; padding: 8px 15px; border-radius: 20px; cursor: pointer; }
+
+.container { max-width: 600px; margin: 40px auto; text-align: center; font-family: 'Rubik', sans-serif; }
+.calculator-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-top: 20px; }
+
+.form-group { margin-bottom: 20px; text-align: left; }
+label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+
+/* ESTILOS NUEVOS PARA EL SELECTOR */
+.select-fav {
+  width: 100%; padding: 12px; border: 2px solid #84dcc6; border-radius: 8px; 
+  font-size: 16px; background-color: #f0fbf8; cursor: pointer; outline: none;
+}
+.highlight-label { color: #006644 !important; font-weight: bold; }
+
+.divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #999; font-size: 14px; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #eee; }
+.divider span { padding: 0 10px; }
+
+.btn-calc { width: 100%; background: #191a20; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+.btn-calc:hover { background: #333; }
+
+.result-box { margin-top: 30px; background: #e0fbf4; padding: 20px; border-radius: 12px; border: 1px solid #84dcc6; animation: fadeIn 0.5s; }
+.total { font-size: 40px; font-weight: bold; color: #006644; margin: 10px 0; }
+.breakdown { display: flex; justify-content: space-around; color: #555; margin-top: 10px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

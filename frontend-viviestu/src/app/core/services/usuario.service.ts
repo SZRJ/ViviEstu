@@ -12,6 +12,7 @@ import { RegistroRequest } from '../models/registro-request.model';
 
 import { environment } from '../../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +22,7 @@ export class UsuarioService {
   // --- DEFINICIÓN DE URLs ---
   private API_USUARIOS = `${environment.apiUrl}/usuarios`;
   private API_PREFERENCIAS = `${environment.apiUrl}/preferencias`;
+  private API_RESUMEN = `${environment.apiUrl}/resumen`;
 
   // --- ESTADO DEL USUARIO (SEÑALES) ---
   token = signal<string | null>(localStorage.getItem('auth_token'));
@@ -203,6 +205,26 @@ export class UsuarioService {
         headers: this.getAuthHeaders() 
     });
   }
+  // SIMULADOR DE GASTO (POST /api/simulador/gasto)
+  simularGasto(alquiler: number, transporte: number): Observable<any> {
+    const url = `${environment.apiUrl}/simulador/gasto`;
+    // Tu backend espera idUsuario, alquiler, costoTransporte
+    const idUsuario = parseInt(localStorage.getItem('usuarioId') || '0');
+    
+    const body = {
+      idUsuario: idUsuario,
+      alquiler: alquiler,
+      costoTransporte: transporte
+    };
+
+    return this.http.post<any>(url, body, { headers: this.getAuthHeaders() })
+      .pipe(map(resp => resp.data));
+  }
+  obtenerResumen(idUsuario: number): Observable<any> {
+    const url = `${this.API_RESUMEN}/${idUsuario}`;
+    return this.http.get<ApiResponse<any>>(url, { headers: this.getAuthHeaders() })
+      .pipe(map(resp => resp.data));
+  }
 
   // ==========================================
   // PRIVADOS
@@ -218,5 +240,18 @@ export class UsuarioService {
       }
     }
     return null;
+  }
+
+ // CONTAR RECOMENDACIONES (Para la notificación)
+  contarRecomendaciones(idUsuario: number): Observable<number> {
+    
+    // CORRECCIÓN AQUÍ: Cambiamos 'this.API_URL' por la ruta explicita a zonas
+    const url = `${environment.apiUrl}/zonas/recomendadas?idUsuario=${idUsuario}`;
+    
+    return this.http.get<any>(url, { headers: this.getAuthHeaders() })
+      .pipe(map(resp => {
+         const lista = resp.data || resp;
+         return Array.isArray(lista) ? lista.length : 0;
+      }));
   }
 }

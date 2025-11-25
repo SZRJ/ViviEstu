@@ -10,10 +10,14 @@ export interface UserInfo {
     
     // Coincide con el campo 'email'
     email: string;
+
+    nombreUsuario: string;
     
     // El rol del usuario (Ej: ESTUDIANTE)
     rol: string; 
     
     fechaNacimiento?: string; 
     correo?: string; 
+
+
 }

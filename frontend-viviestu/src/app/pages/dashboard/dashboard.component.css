@@ -151,3 +151,138 @@
   cursor: not-allowed;
   background-color: #fafafa;
 }
+.action-card.simulator:hover { 
+  border-color: #a29bfe; 
+}
+.action-card.simulator .icon { 
+  background: #f0f0ff; 
+  color: #6c5ce7; 
+}
+/* ... tus estilos anteriores ... */
+
+.mini-stat {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #006644; /* Verde oscuro */
+  background-color: #d1fef2;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  font-weight: 500;
+}
+/* ... TUS ESTILOS ANTERIORES (NO LOS BORRES) ... */
+
+/* --- ESTILOS DE NOTIFICACIONES --- */
+
+.notif-wrapper {
+  position: relative;
+  margin-right: 25px; /* Espacio entre campana y nombre */
+  cursor: pointer;
+}
+
+.bell-icon {
+  font-size: 22px;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.bell-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Puntito Rojo */
+.badge-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4d4d;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 10px;
+  border: 2px solid #d1fef2; /* Borde del color del fondo para separar */
+  min-width: 14px;
+  text-align: center;
+}
+
+/* Menú desplegable de notificaciones */
+.notif-dropdown {
+  position: absolute;
+  top: 140%; /* Un poco más abajo de la campana */
+  right: -60px; /* Alineación */
+  width: 280px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1001; /* Encima de todo */
+  padding: 10px;
+  border: 1px solid #eee;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Flechita decorativa apuntando arriba */
+.notif-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 66px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 1px solid #eee;
+  border-left: 1px solid #eee;
+}
+
+/* Items de la lista */
+.notif-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notif-item:hover {
+  background-color: #f0fbf8; /* Verde muy clarito */
+}
+
+.icon-n {
+  font-size: 18px;
+  background: #e0fbf4;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.text-n strong {
+  font-size: 14px;
+  display: block;
+  color: #191a20;
+  margin-bottom: 2px;
+}
+
+.text-n p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.notif-empty {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 13px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

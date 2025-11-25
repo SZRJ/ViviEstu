@@ -1,26 +1,99 @@
-<div class="container">
-  <h2>Encuentra tu zona ideal</h2>
-  
-  <div *ngIf="loading" class="loading">Cargando zonas...</div>
+<nav class="navbar">
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/dashboard" style="cursor: pointer;">ViviEstu</h1>
+    <nav class="nav-links">
+      <a routerLink="/dashboard">Inicio</a>
+      <a routerLink="/zonas" class="active-link">Zonas</a>
+      <a routerLink="/nosotros">Nosotros</a>
+    </nav>
+  </div>
 
-  <div class="zonas-grid" *ngIf="!loading">
-    
-    <div class="zona-card" *ngFor="let z of zonas" [routerLink]="['/zonas', z.idZona]">
-      <img [src]="getImagenRandom(z.idZona)" alt="Foto zona">
-      
-      <div class="card-content">
-        <div class="header-card">
-          <h3>{{ z.nombre }}</h3>
-          <span class="badge" [class.alta]="z.seguridad === 'ALTA'">Seg: {{ z.seguridad }}</span>
-        </div>
-        
-        <div class="details">
-          <p>💰 Precio Promedio: <b>S/. {{ z.precioPromedio }}</b></p>
-          <p>🚌 Transporte: {{ z.transporteDisponible }}</p>
-        </div>
-        
-        <button class="btn-ver">Ver Detalles</button>
+  <div class="nav-right">
+    <div *ngIf="usuarioService.isLoggedIn()" class="user-logged-in" style="position: relative;">
+      <div class="user-menu" (click)="toggleUserMenu($event)">
+        Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
       </div>
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <button (click)="irAlPerfil()">Actualizar perfil</button>
+        <button (click)="irADesactivarCuenta()">Configuración de cuenta</button>
+        <hr>
+        <button (click)="logout()" class="btn-logout-item">Cerrar sesión</button>
+      </div>
+    </div>
+    <div *ngIf="!usuarioService.isLoggedIn()" class="auth-buttons">
+      <a routerLink="/login" class="btn-login-nav">Iniciar Sesión</a>
+    </div>
+  </div>
+</nav>
+
+<div class="main-layout">
+  
+  <aside class="filters-sidebar">
+    <h3>🔍 Filtros</h3>
+    <div class="filter-group">
+      <label>Buscar por nombre</label>
+      <input type="text" [(ngModel)]="filtro.nombre" placeholder="Ej: Miraflores">
+    </div>
+    <div class="filter-group">
+      <label>Precio Máximo (S/.)</label>
+      <input type="number" [(ngModel)]="filtro.maxPrecio" placeholder="0">
+    </div>
+    <div class="filter-group">
+      <label>Seguridad</label>
+      <select [(ngModel)]="filtro.seguridad">
+        <option value="">Todas</option>
+        <option value="ALTA">Alta</option>
+        <option value="MEDIA">Media</option>
+        <option value="BAJA">Baja</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button (click)="aplicarFiltros()" class="btn-apply">Aplicar</button>
+      <button (click)="limpiarFiltros()" class="btn-clear">Limpiar</button>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="header-content">
+      <h2>Explorar Zonas</h2>
+      <div class="tabs">
+        <button [class.active]="vistaActual === 'recomendadas'" (click)="verRecomendadas()">✨ Para mí</button>
+        <button [class.active]="vistaActual === 'todas'" (click)="verTodas()">🌎 Todas</button>
+      </div>
+    </div>
+    
+    <div *ngIf="loading" class="loading"><div class="spinner"></div>Cargando...</div>
+
+    <div class="zonas-grid" *ngIf="!loading">
+      <div class="zona-card" *ngFor="let z of zonas" [routerLink]="['/zonas', z.idZona]">
+        
+        <div class="image-container">
+          <img [src]="getImagenRandom(z.idZona)" alt="Foto">
+          <button class="btn-fav" [class.is-fav]="z.esFavorito" (click)="toggleFavorito($event, z)">
+            <span *ngIf="z.esFavorito">❤️</span><span *ngIf="!z.esFavorito">🤍</span>
+          </button>
+        </div>
+        
+        <div class="card-content">
+          <div class="header-card">
+            <h3>{{ z.nombre }}</h3>
+            <div class="rating">⭐ {{ z.promedioCalificacion }}</div>
+          </div>
+          <div class="tags">
+              <span class="badge" [class.alta]="z.seguridad === 'ALTA'">Seg: {{ z.seguridad }}</span>
+          </div>
+          <div class="price">
+            <span class="label">Precio:</span><span class="amount">S/. {{ z.precioPromedio }}</span>
+          </div>
+          <button class="btn-ver">Ver Detalles</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="!loading && zonas.length === 0" class="no-results">
+        <p>No se encontraron zonas con esos filtros.</p>
+        <button (click)="limpiarFiltros()">Ver todas</button>
     </div>
 
   </div>

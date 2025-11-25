@@ -100,7 +100,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/favoritos/{idUsuario}").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/favoritos/{usuarioId}").authenticated() // POST /api/favoritos/{usuarioId}
                         .requestMatchers(HttpMethod.DELETE, "/api/favoritos/{idUsuario}/{idZona}").authenticated() // DELETE /api/favoritos/{idUsuario}/{idZona}
-
+                        .requestMatchers(HttpMethod.PUT, "/api/zonas/recomendacion").authenticated()
                         // Endpoints de Preferencia (CRUD)
                         .requestMatchers("/api/preferencias").authenticated() // POST /api/preferencias
                         .requestMatchers("/api/preferencias/{idUsuario}").authenticated() // GET /api/preferencias/{idUsuario}
@@ -123,7 +123,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/preferencias").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/zonas").hasRole("ADMIN") // Registrar nueva zona
-                        .requestMatchers(HttpMethod.PUT, "/api/zonas/recomendacion").hasRole("ADMIN") // Marcar recomendación
+                        //.requestMatchers(HttpMethod.PUT, "/api/zonas/recomendacion").hasRole("ADMIN") // Marcar recomendación
 
 
                         // Asegurar el resto
