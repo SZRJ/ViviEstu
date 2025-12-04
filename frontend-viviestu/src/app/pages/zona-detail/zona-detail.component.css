@@ -1,217 +1,24 @@
-/* --- NAVBAR (Copiado del Dashboard para consistencia) --- */
-.navbar {
-  background-color: #d1fef2;
-  height: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 40px;
-}
-
+/* Navbar Unificada */
+.navbar { background: #d1fef2; height: 70px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-family: 'Rubik', sans-serif; }
 .nav-left { display: flex; align-items: center; gap: 40px; }
-.logo-text { font-size: 32px; font-weight: 500; color: #000; margin: 0; }
+.logo-text { font-size: 24px; font-weight: 700; color: #191a20; margin: 0; cursor: pointer; }
+.nav-links a { text-decoration: none; color: #333; font-size: 16px; font-weight: 500; margin-right: 20px; }
 
-.nav-links a {
-  text-decoration: none; color: #000; font-size: 18px; 
-  font-weight: 500; margin-right: 20px;
-}
+/* User Menu */
+.user-logged-in { cursor: pointer; user-select: none; }
+.user-menu { font-size: 16px; padding: 8px 12px; border-radius: 8px; transition: background 0.2s; display: flex; align-items: center; }
+.user-menu:hover { background: rgba(0,0,0,0.05); }
+.chevron { font-size: 12px; margin-left: 5px; }
+.user-dropdown { position: absolute; top: 100%; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 200px; padding: 10px 0; z-index: 1000; margin-top: 10px; border: 1px solid #eee; }
+.user-dropdown button { display: block; width: 100%; text-align: left; padding: 10px 20px; background: none; border: none; cursor: pointer; font-size: 14px; color: #333; }
+.user-dropdown button:hover { background: #f5f5f5; }
+.btn-logout-item { color: #ff4d4d !important; }
+.btn-login-nav { background: #191a20; color: white; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: 500; font-size: 14px; }
 
-.nav-right { display: flex; gap: 15px; align-items: center; position: relative; }
+/* Resto de la página de detalle */
+.detail-page { max-width: 900px; margin: 20px auto; padding: 20px; font-family: 'Rubik', sans-serif; }
+.container-volver { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+.link-volver { text-decoration: none; color: #666; font-weight: 500; }
 
-/* MENÚ DESPLEGABLE */
-.user-menu {
-  display: flex; align-items: center; gap: 6px; 
-  cursor: pointer; font-size: 14px; user-select: none;
-}
-.user-dropdown {
-  position: absolute; right: 0; top: 140%; 
-  background: #ffffff; border-radius: 8px; 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14); 
-  padding: 8px 0; min-width: 200px; z-index: 100; border: 1px solid #eee;
-}
-.user-dropdown button {
-  width: 100%; padding: 10px 16px; background: transparent; 
-  border: none; text-align: left; cursor: pointer; font-family: "Rubik", sans-serif;
-}
-.user-dropdown button:hover { background-color: #f0fdfa; }
-
-/* BOTÓN INICIAR SESIÓN (INVITADO) */
-.btn-login-nav {
-  text-decoration: none; color: #000; font-weight: 500; border: 1px solid #000;
-  padding: 8px 16px; border-radius: 4px;
-}
-
-/* --- BOTÓN VOLVER --- */
-.container-volver { max-width: 1000px; margin: 20px auto 0; padding: 0 20px; }
-.link-volver {
-  text-decoration: none; color: #666; font-weight: 500;
-}
-.link-volver:hover { text-decoration: underline; color: #000; }
-
-
-/* --- LOADING --- */
-.loading-container, .error-container {
-  text-align: center; margin-top: 50px; font-family: 'Rubik', sans-serif;
-}
-.spinner {
-  border: 4px solid #f3f3f3; border-top: 4px solid #84dcc6;
-  border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
-  margin: 0 auto 10px auto;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* --- CONTENIDO --- */
-.detail-page {
-  max-width: 1000px; margin: 0 auto; padding: 40px 20px;
-  font-family: 'Rubik', sans-serif;
-}
-
-.header-zona { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
-.header-zona h1 { font-size: 36px; margin: 0; }
-
-.badge { padding: 5px 12px; border-radius: 15px; font-size: 14px; font-weight: bold; }
-.badge.alta { background-color: #d1fef2; color: #046c4e; }
-.badge.media { background-color: #fff3cd; color: #856404; }
-
-/* GALERÍA DE IMÁGENES */
-.gallery { display: flex; gap: 15px; height: 350px; margin-bottom: 40px; border-radius: 16px; overflow: hidden; }
-.img-main { width: 65%; height: 100%; object-fit: cover; }
-.gallery-side { width: 35%; display: flex; flex-direction: column; gap: 15px; }
-.img-small { width: 100%; height: calc(50% - 7.5px); object-fit: cover; }
-
-/* GRID DE INFORMACIÓN */
-.info-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px; margin-bottom: 40px;
-}
-.info-card {
-  background: white; padding: 25px; border-radius: 12px;
-  border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-  text-align: center;
-}
-.info-card .icon { font-size: 30px; margin-bottom: 10px; }
-.info-card h3 { font-size: 16px; color: #666; margin: 0; }
-.info-card .big-text { font-size: 28px; font-weight: bold; margin: 10px 0; color: #191a20; }
-.info-card small { color: #888; }
-
-/* COMENTARIOS */
-.comments-section { background: #fafafa; padding: 30px; border-radius: 12px; }
-.comment-box { display: flex; gap: 15px; background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-top: 15px; }
-.fake-avatar { width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-
-.btn-send {
-  background-color: #191a20;
-  color: white;
-  border: none;
-  padding: 0 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-.btn-send:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-.fecha {
-  font-size: 12px;
-  color: #999;
-}
-
-.stars.disabled {
-  opacity: 0.5;
-  pointer-events: none; /* Bloquea clics mientras envía */
-}
-
-.success-msg {
-  color: #046c4e; /* Verde bonito */
-  font-weight: bold;
-  margin-top: 10px;
-}
-/* Contenedor para alinear título y botón */
-.titulo-con-boton {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-/* Estilo base del botón */
-.btn-recomendar {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.btn-recomendar:hover {
-    background-color: #e0e0e0;
-    transform: translateY(-2px);
-}
-
-/* ESTADO ACTIVO (Cuando zona.recomendado es true) */
-.btn-recomendar.activo {
-    background-color: #84dcc6; /* Tu color verde menta */
-    border-color: #84dcc6;
-    color: #004d33; /* Texto verde oscuro */
-    box-shadow: 0 2px 8px rgba(132, 220, 198, 0.4);
-}
-
-.btn-recomendar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-/* ... (estilos anteriores) ... */
-
-/* TRANSPORTE CARD */
-.transporte-card {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-
-.transporte-card h3 { margin-top: 0; margin-bottom: 20px; font-size: 18px; }
-
-.transporte-controls {
-  display: flex;
-  gap: 15px;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.t-group { flex: 1; min-width: 150px; }
-.t-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; font-weight: 600; }
-.t-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-
-.btn-calc-t {
-  background: #191a20; color: white; border: none; padding: 11px 25px; 
-  border-radius: 8px; cursor: pointer; font-weight: bold; height: 42px;
-}
-.btn-calc-t:hover { background: #333; }
-
-.t-result {
-  margin-top: 20px;
-  background: #e0fbf4;
-  color: #006644;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 18px;
-  animation: fadeIn 0.5s;
-}
+/* ... (Mantén tus estilos de galería, info, comentarios, etc.) ... */
+/* Solo asegúrate de que no haya duplicados de .navbar */

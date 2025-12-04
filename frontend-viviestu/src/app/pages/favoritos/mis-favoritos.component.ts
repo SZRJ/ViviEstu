@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- Importar ChangeDetectorRef
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ZonaService } from '../../core/services/zona.service';
 import { UsuarioService } from '../../core/services/usuario.service';
 
@@ -16,11 +16,13 @@ export class MisFavoritosComponent implements OnInit {
   private zonaService = inject(ZonaService);
   public usuarioService = inject(UsuarioService);
   private router = inject(Router);
-  private cd = inject(ChangeDetectorRef); // <--- Inyectamos el Despertador
+  private cd = inject(ChangeDetectorRef);
 
   favoritos: any[] = [];
   loading = true;
-  usuarioNombre = localStorage.getItem('usuarioNombre') || 'Usuario';
+  
+  // VARIABLES DEL MENÚ (Esto es lo que faltaba)
+  showUserMenu = false; 
 
   ngOnInit() {
     if (!this.usuarioService.isLoggedIn()) {
@@ -38,13 +40,12 @@ export class MisFavoritosComponent implements OnInit {
         console.log('Favoritos cargados:', data);
         this.favoritos = data; 
         this.loading = false;
-        
-        this.cd.detectChanges(); // <--- ¡DESPIERTA A ANGULAR!
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.loading = false;
-        this.cd.detectChanges(); // También actualizar si hay error
+        this.cd.detectChanges();
       }
     });
   }
@@ -56,7 +57,6 @@ export class MisFavoritosComponent implements OnInit {
     if(!confirm('¿Ya no te interesa esta zona? Se quitará de tus favoritos.')) return;
 
     const idUsuario = parseInt(localStorage.getItem('usuarioId')!);
-
     const backup = [...this.favoritos];
     this.favoritos = this.favoritos.filter(f => f.idZona !== idZona);
 
@@ -68,12 +68,27 @@ export class MisFavoritosComponent implements OnInit {
     });
   }
 
-  cerrarSesion() {
-    this.usuarioService.logout();
-    this.router.navigate(['/']);
-  }
-
   getImagenRandom(id: number) {
     return `https://picsum.photos/seed/${id}/400/250`;
+  }
+
+  // --- FUNCIONES DEL MENÚ NAVBAR (ESTO FALTABA) ---
+  
+  toggleUserMenu(event: Event) {
+    event.stopPropagation();
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  irAlPerfil() { 
+    this.router.navigate(['/profile']); 
+  }
+  
+  irADesactivarCuenta() { 
+    this.router.navigate(['/profile']); 
+  }
+
+  logout() {
+    this.usuarioService.logout();
+    this.router.navigate(['/']);
   }
 }

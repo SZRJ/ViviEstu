@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. IMPORTAR ESTO
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -16,15 +16,22 @@ export class SimuladorComponent implements OnInit {
   private usuarioService = inject(UsuarioService);
   private zonaService = inject(ZonaService);
   private router = inject(Router);
-  private cd = inject(ChangeDetectorRef); // <--- 2. INYECTAR EL DETECTOR
+  private cd = inject(ChangeDetectorRef);
 
+  // INPUTS
   alquiler: number | null = null;
   transporte: number | null = null;
   
+  // NUEVOS CAMPOS
+  comida: number | null = null;
+  extras: number | null = null;
+  meses: number = 1; // Ciclo académico (ej: 5 meses)
+
   misFavoritos: any[] = [];
   favoritoSeleccionado: number | null = null;
 
   resultado: any = null;
+  granTotal: number = 0;
   loading = false;
 
   ngOnInit() {
@@ -37,25 +44,17 @@ export class SimuladorComponent implements OnInit {
 
   cargarFavoritos() {
     const idUsuario = parseInt(localStorage.getItem('usuarioId') || '0');
-    
     this.zonaService.listarFavoritos(idUsuario).subscribe({
       next: (data) => {
-        console.log('Favoritos cargados:', data);
         this.misFavoritos = data;
-        
-        // 3. ¡DESPERTAR A ANGULAR!
-        // Esto obliga a que el *ngIf detecte los datos y muestre el selector YA.
-        this.cd.detectChanges(); 
-      },
-      error: (err) => console.error(err)
+        this.cd.detectChanges();
+      }
     });
   }
 
   onSeleccionarFavorito() {
-    const zonaEncontrada = this.misFavoritos.find(f => f.idZona == this.favoritoSeleccionado);
-    if (zonaEncontrada) {
-      this.alquiler = zonaEncontrada.precioPromedio;
-    }
+    const zona = this.misFavoritos.find(f => f.idZona == this.favoritoSeleccionado);
+    if (zona) this.alquiler = zona.precioPromedio;
   }
 
   calcular() {
@@ -63,21 +62,22 @@ export class SimuladorComponent implements OnInit {
       alert('Ingresa un monto de alquiler válido.');
       return;
     }
-
     this.loading = true;
     const costoTransporte = this.transporte || 0;
 
+    // 1. Backend calcula lo básico
     this.usuarioService.simularGasto(this.alquiler, costoTransporte).subscribe({
       next: (data) => {
         this.resultado = data;
+        
+        // 2. Frontend suma los extras
+        const gastoMensual = data.gastoTotal + (this.comida || 0) + (this.extras || 0);
+        this.granTotal = gastoMensual * this.meses;
+
         this.loading = false;
-        this.cd.detectChanges(); // Actualizar también al mostrar el resultado
+        this.cd.detectChanges();
       },
-      error: (err) => {
-        console.error(err);
-        alert('Error al calcular.');
-        this.loading = false;
-      }
+      error: () => { this.loading = false; alert('Error al calcular'); }
     });
   }
 }
