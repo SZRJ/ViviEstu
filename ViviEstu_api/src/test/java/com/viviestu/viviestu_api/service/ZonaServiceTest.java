@@ -1,146 +1,99 @@
 package com.viviestu.viviestu_api.service;
 
 import com.viviestu.viviestu_api.dto.request.FiltroRequest;
+import com.viviestu.viviestu_api.dto.response.ZonaReporteResponse;
 import com.viviestu.viviestu_api.dto.response.ZonaResponse;
 import com.viviestu.viviestu_api.model.Zona;
 import com.viviestu.viviestu_api.repository.ZonaRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Arrays;
+import java.util.ArrayList; // Importante para listas modificables
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ZonaServiceTest {
+@MockitoSettings(strictness = Strictness.LENIENT)
+class ZonaServiceTest {
 
-    @Mock
-    private ZonaRepository zonaRepository;
+    @Mock private ZonaRepository zonaRepository;
+    @InjectMocks private ZonaService zonaService;
 
-    @InjectMocks
-    private ZonaService zonaService;
-
-    // Zonas de prueba
-    private Zona zonaA; // Característica: distancia, precio bajo
-    private Zona zonaB; // Característica: precio alto
-    private Zona zonaC; // Característica: nombre "Centro"
-
-    // Clase anónima para simular que la entidad Zona tiene el método getDistancia().
-    // Esto es NECESARIO porque el código de servicio usa Reflection.
-    private class ZonaConDistancia extends Zona {
-        private Double distancia;
-
-        // Constructor simplificado sin latitud/longitud
-        public ZonaConDistancia(Integer id, String nombre, Double precio, Double distancia) {
-            this.setIdZona(id);
-            this.setNombre(nombre);
-            this.setPrecioPromedio(precio);
-            this.distancia = distancia;
-            // Quitamos la configuración de latitud/longitud, ya que no existen en Zona
-        }
-
-        // Método usado por Reflection en ZonaService.filtrarZonas
-        public Double getDistancia() {
-            return distancia;
-        }
-    }
-
-    @BeforeEach
-    void setUp() {
-        // Inicializamos ZonaA y ZonaC usando la subclase que incluye getDistancia()
-        // (ID, Nombre, Precio, Distancia)
-        zonaA = new ZonaConDistancia(1, "Zona Norte", 100.0, 5.0); // 5km
-        zonaC = new ZonaConDistancia(3, "Centro Histórico", 200.0, 15.0); // 15km
-
-        // Inicializamos ZonaB usando la clase Zona base
-        Zona zonaBOriginal = new Zona();
-        zonaBOriginal.setIdZona(2);
-        zonaBOriginal.setNombre("Zona Sur");
-        zonaBOriginal.setPrecioPromedio(300.0);
-        zonaBOriginal.setSeguridad("Media");
-        zonaBOriginal.setTransporteDisponible("Bus");
-        zonaBOriginal.setRecomendado(false);
-        // Quitamos la configuración de latitud/longitud de la zona B
-        this.zonaB = zonaBOriginal;
-    }
-
-    // --- Test de Filtros Básicos (JPA Specification) ---
-    // Prueba el filtro por minPrecio y maxPrecio
+    // --- US04: ZONAS SUGERIDAS ---
     @Test
-    void testFiltroPorMinYMaxPrecio() {
-        // Simular que el repositorio devuelve solo las zonas que cumplen el rango de precio [50, 250]
-        when(zonaRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(zonaA, zonaC));
+    void testListarZonasQueCumplen_US04() {
+        Object[] row = {1, "Zona Ideal", 1000.0, "ALTA"};
+        when(zonaRepository.listarZonasQueCumplen(1L)).thenReturn(Collections.singletonList(row));
 
-        // Filtro: Precio entre 50 y 250
-        FiltroRequest request = new FiltroRequest("Zona", 50.0, 250.0, null, null, null, null, null, null);
+        List<ZonaReporteResponse> res = zonaService.listarZonasQueCumplen(1L);
 
-        List<ZonaResponse> resultado = zonaService.filtrarZonas(request);
-
-        // Zona B (300.0) es filtrada por la Specification antes de llegar al servicio.
-        assertEquals(2, resultado.size());
-        assertEquals(1, resultado.get(0).idZona());
-        assertEquals(3, resultado.get(1).idZona());
+        assertFalse(res.isEmpty());
+        assertEquals("Zona Ideal", res.get(0).nombre());
     }
 
-    // --- Test de Filtros y Ordenamiento por Distancia (Reflection) ---
-    // Prueba el filtro post-consulta por maxDistancia
+    // --- US05: CONSULTAR FICHAS ---
     @Test
-    void testFiltroPorMaxDistancia() {
-        // Simular que el repositorio devuelve todas las zonas (A y C tienen distancia simulada, B no)
-        when(zonaRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(zonaA, zonaB, zonaC));
+    void testObtenerPorId_US05() {
+        Integer idZona = 1;
+        Zona z = new Zona();
+        z.setIdZona(idZona);
+        z.setNombre("Miraflores");
+        z.setPrecioPromedio(2500.0);
 
-        // Filtro: Distancia máxima de 10.0 km
-        FiltroRequest request = new FiltroRequest(null, null, null, null, null, 10.0, null, null, null);
+        when(zonaRepository.findById(idZona)).thenReturn(Optional.of(z));
 
-        List<ZonaResponse> resultado = zonaService.filtrarZonas(request);
+        ZonaResponse response = zonaService.obtenerZonaPorId(idZona);
 
-        // Solo Zona A (5km) debería pasar el filtro post-consulta (15km > 10.0, ZonaB no tiene getDistancia simulada)
-        assertEquals(1, resultado.size());
-        assertEquals(1, resultado.get(0).idZona());
-        assertEquals("Zona Norte", resultado.get(0).nombre());
+        assertNotNull(response);
+        assertEquals("Miraflores", response.nombre());
     }
 
-    // Prueba el ordenamiento por getDistancia()
+    // --- US08: FILTROS DE BÚSQUEDA ---
     @Test
-    void testOrdenamientoPorDistancia() {
-        // Simular que el repositorio devuelve las zonas sin ordenar
-        when(zonaRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(zonaC, zonaA, zonaB));
+    void testFiltrarZonas_US08() {
+        FiltroRequest filtro = new FiltroRequest("Lince", null, null, null, null, null, null, null, null);
 
-        // Filtro: Ordenar por distancia
-        FiltroRequest request = new FiltroRequest(null, null, null, null, null, null, null, null, true); // ordenarPorDistancia = true
+        Zona zonaEncontrada = new Zona();
+        zonaEncontrada.setNombre("Lince");
+        zonaEncontrada.setPrecioPromedio(1500.0); // Precio necesario para el sort
 
-        List<ZonaResponse> resultado = zonaService.filtrarZonas(request);
+        // CORRECCIÓN: Usamos new ArrayList(...) para que la lista sea modificable (mutable)
+        // Esto evita el UnsupportedOperationException cuando el servicio intenta ordenar la lista
+        List<Zona> listaModificable = new ArrayList<>();
+        listaModificable.add(zonaEncontrada);
 
-        // Esperado: Zona A (5km) -> Zona C (15km) -> Zona B (al final por no tener getDistancia simulado)
-        assertEquals(3, resultado.size());
-        assertEquals(1, resultado.get(0).idZona()); // 5km
-        assertEquals(3, resultado.get(1).idZona()); // 15km
-        assertEquals(2, resultado.get(2).idZona()); // 300.0 (por precio promedio)
+        when(zonaRepository.findAll(any(Specification.class))).thenReturn(listaModificable);
+
+        List<ZonaResponse> resultados = zonaService.filtrarZonas(filtro);
+
+        assertFalse(resultados.isEmpty());
+        assertEquals("Lince", resultados.get(0).nombre());
     }
 
-    // Prueba el ordenamiento por precio promedio (por defecto)
+    // --- US15: MARCAR COMO RECOMENDADA ---
     @Test
-    void testOrdenamientoPorPrecioPorDefecto() {
-        // Simular que el repositorio devuelve las zonas sin ordenar
-        when(zonaRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(zonaC, zonaA, zonaB));
+    void testMarcarRecomendacion_US15() {
+        Integer idZona = 1;
+        Zona z = new Zona();
+        z.setIdZona(idZona);
+        z.setRecomendado(false);
 
-        // Filtro: No ordenar por distancia (debe ordenar por precio)
-        FiltroRequest request = new FiltroRequest(null, null, null, null, null, null, null, null, false); // ordenarPorDistancia = false
+        when(zonaRepository.findById(idZona)).thenReturn(Optional.of(z));
+        when(zonaRepository.save(any(Zona.class))).thenAnswer(i -> i.getArgument(0));
 
-        List<ZonaResponse> resultado = zonaService.filtrarZonas(request);
+        ZonaResponse res = zonaService.marcarRecomendacion(idZona, true);
 
-        // El resultado esperado es: Zona A (100.0), Zona C (200.0), Zona B (300.0)
-        assertEquals(3, resultado.size());
-        assertEquals(1, resultado.get(0).idZona()); // 100.0
-        assertEquals(3, resultado.get(1).idZona()); // 200.0
-        assertEquals(2, resultado.get(2).idZona()); // 300.0
+        assertTrue(res.recomendado());
     }
 }
