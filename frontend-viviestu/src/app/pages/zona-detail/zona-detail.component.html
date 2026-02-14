@@ -1,0 +1,147 @@
+<nav class="navbar">
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/dashboard" style="cursor: pointer;">ViviEstu</h1>
+    <nav class="nav-links">
+      <a routerLink="/dashboard">Inicio</a>
+      <a routerLink="/zonas">Zonas</a>
+      <a routerLink="/nosotros">Nosotros</a>
+    </nav>
+  </div>
+
+  <div class="nav-right" *ngIf="usuarioService.isLoggedIn(); else invitadoNav">
+    <div class="user-menu" (click)="toggleUserMenu($event)">
+      Hola, <b>{{ usuarioService.userName() }}</b> <span class="chevron">▾</span>
+    </div>
+    <div class="user-dropdown" *ngIf="showUserMenu">
+      <button (click)="irAlPerfil()">Actualizar perfil</button>
+      <button (click)="irADesactivarCuenta()">Configuración de cuenta</button>
+      <hr>
+      <button (click)="logout()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <ng-template #invitadoNav>
+    <div class="nav-right">
+      <a routerLink="/login" class="btn-login-nav">Iniciar Sesión</a>
+    </div>
+  </ng-template>
+</nav>
+
+<div class="container-volver">
+  <a routerLink="/zonas" class="link-volver">← Volver al listado de zonas</a>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Cargando información...</p>
+</div>
+
+<div class="detail-page" *ngIf="!loading && zona">
+  
+  <div class="header-zona">
+    <div class="titulo-con-boton">
+        <h1>{{ zona.nombre }}</h1>
+        <button 
+            class="btn-recomendar" 
+            [class.activo]="zona.recomendado" 
+            (click)="toggleRecomendacion()"
+            title="Dar visto bueno a esta zona">
+            <span *ngIf="zona.recomendado">👍 Recomendada</span>
+            <span *ngIf="!zona.recomendado">👍 Recomendar</span>
+        </button>
+    </div>
+    <span class="badge" [ngClass]="{'alta': zona.seguridad === 'ALTA', 'media': zona.seguridad === 'MEDIA'}">
+      Seguridad: {{ zona.seguridad }}
+    </span>
+  </div>
+
+  <div class="gallery">
+    <img [src]="getImagenRandom(zona.idZona, 10)" class="img-main">
+    <div class="gallery-side">
+        <img [src]="getImagenRandom(zona.idZona, 20)" class="img-small">
+        <img [src]="getImagenRandom(zona.idZona, 30)" class="img-small">
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card precio">
+      <div class="icon">💰</div>
+      <h3>Precio Promedio</h3>
+      <p class="big-text">S/. {{ zona.precioPromedio }}</p>
+      <small>mensual aprox.</small>
+    </div>
+    <div class="info-card transporte">
+      <div class="icon">🚌</div>
+      <h3>Transporte</h3>
+      <p>{{ zona.transporteDisponible }}</p>
+    </div>
+    <div class="info-card seguridad">
+      <div class="icon">👮</div>
+      <h3>Seguridad</h3>
+      <p>{{ zona.seguridad }}</p>
+    </div>
+  </div>
+
+  <div class="transporte-card">
+    <h3>⏱️ Calcula tu tiempo de viaje</h3>
+    
+    <div class="transporte-controls">
+      <div class="t-group">
+        <label>Destino:</label>
+        <select [(ngModel)]="destinoTransporte">
+          <option value="Universidad">Mi Universidad</option>
+          <option value="Centro">Centro de Lima</option>
+          <option value="Trabajo">Trabajo</option>
+        </select>
+      </div>
+
+      <div class="t-group">
+        <label>Ir en:</label>
+        <select [(ngModel)]="modoTransporte">
+          <option value="Bus">🚌 Bus / Metropolitano</option>
+          <option value="Auto">🚗 Auto / Taxi</option>
+          <option value="Caminando">🚶 Caminando</option>
+        </select>
+      </div>
+
+      <button (click)="calcularTiempo()" class="btn-calc-t" [disabled]="calculandoTransporte">
+        {{ calculandoTransporte ? 'Calculando...' : 'Calcular Tiempo' }}
+      </button>
+    </div>
+
+    <div class="t-result" *ngIf="resultadoTransporte">
+      <p>Tiempo estimado: <strong>{{ resultadoTransporte }}</strong></p>
+    </div>
+  </div>
+
+  <div class="rating-section">
+    <h3>¿Qué tal te parece esta zona?</h3>
+    <div class="stars" [class.disabled]="enviandoCalificacion">
+      <span *ngFor="let s of [1,2,3,4,5]" (click)="!enviandoCalificacion && calificar(s)" [class.filled]="s <= puntuacionSeleccionada">★</span>
+    </div>
+    <p *ngIf="mensajeCalificacion" class="success-msg">{{ mensajeCalificacion }}</p>
+  </div>
+
+  <div class="comments-section">
+    <h3>💬 Opiniones de estudiantes</h3>
+    <div class="comment-box">
+      <input type="text" [(ngModel)]="nuevoComentario" placeholder="¿Qué opinas de esta zona? Escribe aquí..." [disabled]="enviandoComentario" (keyup.enter)="publicarComentario()">
+      <button class="btn-send" (click)="publicarComentario()" [disabled]="!nuevoComentario.trim() || enviandoComentario">Enviar</button>
+    </div>
+
+    <div class="lista-comentarios">
+      <div class="user-comment" *ngFor="let c of comentarios">
+        <div class="avatar">👤</div>
+        <div class="comment-content">
+          <div class="comment-header">
+            <strong>{{ c.nombreUsuario || 'Anónimo' }}</strong>
+            <span class="fecha" *ngIf="c.fecha">{{ c.fecha | date:'shortDate' }}</span>
+          </div>
+          <p>{{ c.comentario }}</p>
+        </div>
+      </div>
+      <p *ngIf="comentarios.length === 0" style="color:#999; text-align:center;">Sé el primero en comentar.</p>
+    </div>
+  </div>
+
+</div>

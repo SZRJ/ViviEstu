@@ -1,0 +1,7 @@
+.simulador{ padding:12px; max-width:720px; }
+.simulador .row{ display:flex; gap:8px; align-items:center; margin-bottom:8px }
+.simulador input, .simulador select{ padding:6px; border-radius:4px; border:1px solid #ccc }
+.simulador .actions{ margin-top:10px }
+.simulador button{ padding:8px 12px; margin-right:8px; background:#6a3cb7; color:white; border:none; border-radius:4px }
+.simulador button.outline{ background:transparent; color:#6a3cb7; border:1px solid #6a3cb7 }
+.simulador .result{ margin-top:12px; padding:8px; background:#f6f6f6; border-radius:6px }

@@ -1,0 +1,17 @@
+
+/* Favoritos component themed styles */
+.favoritos-form{ display:flex; gap:8px; align-items:center; margin-bottom:12px }
+.favoritos-form input{ padding:10px; border:1px solid #e0efe0; border-radius:6px; flex:1; min-width:0 }
+.favoritos-form .btn-add{ padding:8px 12px }
+
+/* Mobile: stack inputs if narrow */
+@media (max-width:520px){
+	.favoritos-form{ flex-direction:column; align-items:stretch }
+	.favoritos-form .btn-add{ align-self:flex-end }
+}
+
+.fav-item{ display:flex; justify-content:space-between; align-items:center }
+.fav-card{ background: var(--card); border-radius:8px; padding:10px; margin:8px 0; display:flex; justify-content:space-between; width:100%; box-shadow:0 1px 4px rgba(0,0,0,0.04) }
+.fav-card .meta{ max-width:80% }
+.fav-card small{ color:var(--muted) }
+

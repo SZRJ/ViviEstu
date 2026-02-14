@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: false,\n  apiUrl: 'http://localhost:8080/api',\n  // Optional: add your Google Maps API key here for more realistic travel times\n  // e.g. googleMapsApiKey: 'YOUR_API_KEY'\n  googleMapsApiKey: ''\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

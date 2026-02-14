@@ -1,0 +1,80 @@
+<nav class="navbar">
+  <div class="logo" routerLink="/dashboard">ViviEstu</div>
+  <button routerLink="/dashboard" class="btn-back">Volver</button>
+</nav>
+
+<div class="container">
+  <h2>🧮 Simulador Financiero</h2>
+  <p class="subtitle">Proyecta todos tus gastos del ciclo académico</p>
+
+  <div class="calculator-grid">
+    
+    <div class="input-column">
+      <div class="card input-card">
+        <h3>1. Vivienda y Transporte</h3>
+        <div class="form-group" *ngIf="misFavoritos.length > 0">
+            <label class="highlight-label">Usar precio de favorito:</label>
+            <select [(ngModel)]="favoritoSeleccionado" (change)="onSeleccionarFavorito()" class="select-fav">
+              <option [ngValue]="null">-- Seleccionar --</option>
+              <option *ngFor="let fav of misFavoritos" [value]="fav.idZona">
+                {{ fav.nombreZona }} (S/. {{ fav.precioPromedio }})
+              </option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label>Alquiler (S/.) *</label>
+          <input type="number" [(ngModel)]="alquiler" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Transporte Mensual (S/.)</label>
+          <input type="number" [(ngModel)]="transporte" placeholder="0.00">
+        </div>
+      </div>
+
+      <div class="card input-card">
+        <h3>2. Otros Gastos Mensuales</h3>
+        <div class="form-group">
+            <label>Alimentación (S/.)</label>
+            <input type="number" [(ngModel)]="comida" placeholder="Ej: 400">
+        </div>
+        <div class="form-group">
+            <label>Extras / Ocio (S/.)</label>
+            <input type="number" [(ngModel)]="extras" placeholder="Ej: 100">
+        </div>
+      </div>
+
+      <div class="card input-card">
+        <h3>3. Duración</h3>
+        <div class="form-group">
+            <label>Meses (Ciclo académico)</label>
+            <input type="number" [(ngModel)]="meses" min="1" max="12">
+        </div>
+      </div>
+
+      <button (click)="calcular()" class="btn-calc" [disabled]="loading">
+        {{ loading ? 'Calculando...' : 'PROYECTAR GASTOS' }}
+      </button>
+    </div>
+
+    <div class="result-column" *ngIf="resultado">
+      <div class="result-card">
+        <h3>Resumen de Proyección</h3>
+        
+        <div class="total-display">
+            <small>Gasto Total para {{ meses }} meses:</small>
+            <div class="big-number">S/. {{ granTotal | number:'1.2-2' }}</div>
+        </div>
+
+        <hr>
+
+        <div class="breakdown-list">
+            <div class="item"><span>🏠 Alquiler:</span><strong>S/. {{ resultado.alquiler * meses }}</strong></div>
+            <div class="item"><span>🚌 Transporte:</span><strong>S/. {{ resultado.transporte * meses }}</strong></div>
+            <div class="item"><span>🍔 Comida:</span><strong>S/. {{ (comida || 0) * meses }}</strong></div>
+            <div class="item"><span>🎉 Extras:</span><strong>S/. {{ (extras || 0) * meses }}</strong></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

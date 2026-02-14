@@ -1,6 +1,6 @@
 package com.viviestu.viviestu_api.controller;
 
-import com.viviestu.viviestu_api.dto.NotificacionDTO;
+import com.viviestu.viviestu_api.dto.response.NotificacionResponse;
 import com.viviestu.viviestu_api.service.RecomendacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ public class NotificacionesController {
     private RecomendacionService recomendacionService;
 
     @GetMapping("/notificaciones/{usuarioId}")
-    public ResponseEntity<?> obtenerNotificaciones(@PathVariable("usuarioId") Integer usuarioId,
+    public ResponseEntity<?> obtenerNotificaciones(@PathVariable("usuarioId") Long usuarioId,
                                                    @RequestParam(value = "top", required = false, defaultValue = "5") Integer top) {
-        List<NotificacionDTO> lista = recomendacionService.generarRecomendacionesParaUsuario(usuarioId, top);
+        List<NotificacionResponse> lista = recomendacionService.generarRecomendacionesParaUsuario(usuarioId, top);
         if (lista.isEmpty()) {
             return ResponseEntity.ok().body("{\"notificaciones\": [], \"mensaje\": \"No hay recomendaciones (comprueba si tu perfil está completo)\"}");
         }

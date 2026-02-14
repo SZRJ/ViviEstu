@@ -1,0 +1,63 @@
+<div class="login-page">
+  <nav class="navbar">
+    <div class="logo">ViviEstu</div>
+    <div class="nav-links">
+      <a routerLink="/">Inicio</a>
+      <a href="#">Nosotros</a>
+      <a href="#">Más</a>
+    </div>
+    <div class="nav-actions">
+      <button routerLink="/register" class="btn-outline">Registrarse</button>
+    </div>
+  </nav>
+
+  <div class="login-container">
+    <div class="login-card">
+      <h2>Iniciar Sesión</h2>
+      
+      <form (ngSubmit)="login()">
+        
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input 
+            type="email" 
+            id="correo" 
+            name="correo" 
+            placeholder="ejemplo@correo.com"
+            [(ngModel)]="loginData.correo" 
+            required
+            [disabled]="isSubmitting"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="contrasena">Contraseña</label>
+          <input 
+            type="password" 
+            id="contrasena" 
+            name="contrasena" 
+            placeholder="***************"
+            [(ngModel)]="loginData.contrasena"
+            required
+            [disabled]="isSubmitting"
+          >
+        </div>
+
+        <div *ngIf="errorMessage" class="alert-error" style="color: #dc2626; background: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #dc2626; text-align: center;">
+    {{ errorMessage }}
+</div>
+
+<button 
+  type="submit" 
+  class="btn-primary" 
+  [disabled]="isSubmitting"> {{ isSubmitting ? 'Cargando...' : 'INICIAR SESIÓN' }}
+</button>
+
+        <div class="forgot-password">
+          <span>¿Olvidaste tu contraseña? </span>
+          <a href="#">Restablecer contraseña</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

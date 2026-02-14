@@ -2,12 +2,14 @@ package com.viviestu.viviestu_api.model;
 
 import jakarta.persistence.*;
 
+/// Entidad que representa la calificación que un usuario asigna a una zona
 @Entity
 @Table(name = "calificaciones")
 public class Calificacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_calificacion")
     private Integer idCalificacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -19,11 +21,11 @@ public class Calificacion {
     private Zona zona;
 
     @Column(nullable = false)
-    private Integer puntuacion; // 1 a 5
+    private Integer puntuacion; // Valor 1 a 5
 
     public Calificacion() {}
 
-    // Getters / Setters
+    // --- Getters y Setters ---
     public Integer getIdCalificacion() { return idCalificacion; }
     public void setIdCalificacion(Integer idCalificacion) { this.idCalificacion = idCalificacion; }
 

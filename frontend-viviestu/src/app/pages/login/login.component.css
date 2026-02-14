@@ -1,0 +1,106 @@
+:host {
+  font-family: "Rubik", sans-serif;
+}
+
+.login-page {
+  min-height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  height: 80px;
+  background-color: #d1fef2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.logo { font-size: 32px; font-weight: bold; }
+
+.nav-links a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #000;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  text-align: center;
+}
+
+h2 { font-size: 36px; margin-bottom: 30px; }
+
+.form-group { margin-bottom: 20px; text-align: left; }
+
+label { display: block; margin-bottom: 8px; font-weight: 500; }
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #000;
+  border-radius: 8px;
+  background-color: #f0f2ff;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box; /* Importante para que no se salga del ancho */
+}
+
+input:focus { border-color: #84dcc6; }
+
+/* ESTILO NUEVO: Alerta de Error */
+.alert-error {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #84dcc6;
+  color: #191a20;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover { background-color: #6bc7b0; }
+
+/* Estado Deshabilitado (Cargando) */
+.btn-primary.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.forgot-password { font-size: 14px; }
+.forgot-password a { color: #f97316; text-decoration: none; font-weight: bold; }

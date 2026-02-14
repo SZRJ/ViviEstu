@@ -1,0 +1,111 @@
+<nav class="navbar">
+  <div class="nav-left">
+    <h1 class="logo-text" routerLink="/dashboard" style="cursor: pointer;">ViviEstu</h1>
+    
+    <nav class="nav-links">
+      <a routerLink="/dashboard">Inicio</a>
+      <a routerLink="/zonas">Zonas</a>
+      <a routerLink="/nosotros">Nosotros</a> 
+    </nav>
+  </div>
+
+  <div class="nav-right">
+    <div class="user-logged-in" style="position: relative;">
+      
+      <div class="user-menu" (click)="toggleUserMenu($event)">
+        Hola, <b>{{ usuarioNombre }}</b> <span class="chevron">▾</span>
+      </div>
+
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <button (click)="irAlPerfil()" style="font-weight: bold; color: #84dcc6;">Actualizar perfil</button>
+        <button (click)="irADesactivarCuenta()">Configuración de cuenta</button>
+        <hr>
+        <button (click)="logout()" class="btn-logout-item">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="profile-page">
+  <div class="profile-container">
+    
+    <div class="card user-card">
+      <div class="avatar-circle">
+        {{ usuarioNombre.charAt(0).toUpperCase() }}
+      </div>
+      <h2>{{ usuarioNombre }}</h2>
+      <p class="user-role">Estudiante</p>
+      <hr>
+      <div class="actions">
+        <button class="btn-danger" (click)="confirmarEliminacion()">Eliminar Cuenta</button>
+      </div>
+    </div>
+
+    <div class="card prefs-card">
+      <h3>Mis Preferencias de Vivienda</h3>
+      <p class="hint">Ayúdanos a encontrar tu lugar ideal.</p>
+
+      <div *ngIf="mensaje" class="alert-success">{{ mensaje }}</div>
+
+      <form (ngSubmit)="guardarCambios()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Universidad / Instituto</label>
+            <select [(ngModel)]="misPreferencias.universidad" name="universidad">
+              <option value="UPC">UPC</option>
+              <option value="ULima">U. de Lima</option>
+              <option value="PUCP">PUCP</option>
+              <option value="USIL">USIL</option>
+              <option value="UTP">UTP</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Presupuesto Máximo (S/.)</label>
+            <input type="number" [(ngModel)]="misPreferencias.presupuesto" name="presupuesto">
+            <input type="range" min="300" max="3000" step="50" [(ngModel)]="misPreferencias.presupuesto" name="rangePresupuesto">
+          </div>
+
+          <div class="form-group">
+            <label>Tiempo máximo de viaje (min)</label>
+            <input type="number" [(ngModel)]="misPreferencias.tiempoMax" name="tiempoMax">
+          </div>
+
+          <div class="form-group">
+            <label>Medio de Transporte</label>
+            <select [(ngModel)]="misPreferencias.transporte" name="transporte">
+              <option value="Bus">Transporte Público (Bus)</option>
+              <option value="Taxi">Taxi / Auto</option>
+              <option value="Caminando">Caminando</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Nivel de Seguridad</label>
+            <select [(ngModel)]="misPreferencias.seguridad" name="seguridad">
+              <option value="Alta">Alta (Rejas/Vigilancia)</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-save" [disabled]="isSaving">
+          {{ isSaving ? 'Guardando...' : 'Guardar Preferencias' }}
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-box">
+      <h3>¿Estás seguro?</h3>
+      <p>Esta acción desactivará tu cuenta. Tendrás que contactar a soporte para recuperarla.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelarEliminacion()">Cancelar</button>
+        <button class="btn-confirm-delete" (click)="eliminarCuentaDefinitiva()">Sí, Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

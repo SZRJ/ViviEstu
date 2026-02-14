@@ -1,0 +1,75 @@
+/* --- GENERAL --- */
+:host { display: block; font-family: "Rubik", sans-serif; }
+.dashboard-wrapper { width: 100%; min-height: 100vh; background-color: #f9f9f9; display: flex; flex-direction: column; }
+
+/* --- NAVBAR ESTANDARIZADA --- */
+.navbar {
+  background-color: #d1fef2;
+  height: 70px;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky; top: 0; z-index: 100;
+}
+
+.nav-left { display: flex; align-items: center; gap: 40px; }
+.logo { font-size: 24px; font-weight: 700; color: #191a20; cursor: pointer; text-decoration: none; }
+.nav-right { display: flex; gap: 15px; align-items: center; position: relative; }
+
+/* Notificaciones y Menú (Estilos compartidos) */
+.notif-wrapper { position: relative; margin-right: 25px; cursor: pointer; }
+.bell-icon { font-size: 22px; transition: transform 0.2s; }
+.bell-icon:hover { transform: scale(1.1); }
+.badge-count { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 10px; }
+
+/* --- CONTENIDO DASHBOARD --- */
+.dashboard-container { 
+  max-width: 1100px; 
+  margin: 40px auto; 
+  padding: 20px; 
+  text-align: center; 
+  width: 90%; /* Asegura que no se pegue a los bordes */
+}
+
+.welcome-section h1 { font-size: 36px; margin-bottom: 10px; font-weight: 500; }
+.welcome-section p { font-size: 18px; color: #666; margin-bottom: 40px; }
+
+/* --- GRID CORREGIDO (Para que no salga vertical) --- */
+.grid-actions { 
+  display: grid; 
+  /* Cambio clave: Bajamos de 350px a 260px para que quepan más tarjetas */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+  gap: 30px; 
+  justify-content: center;
+}
+
+.action-card {
+  background: white; padding: 30px; border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #eee;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 250px; /* Altura uniforme */
+}
+
+.action-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+
+.icon { font-size: 40px; margin-bottom: 15px; background: #f4f4f4; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.info h3 { margin: 0 0 10px 0; font-size: 20px; font-weight: 600; }
+.info p { margin: 0; color: #666; font-size: 14px; line-height: 1.5; }
+
+/* Colores */
+.action-card.primary:hover { border-color: #84dcc6; } .action-card.primary .icon { background: #e0fbf4; color: #006644; }
+.action-card.favorite:hover { border-color: #ffb3b3; } .action-card.favorite .icon { background: #ffecec; color: #ff4d4d; }
+.action-card.simulator:hover { border-color: #a29bfe; } .action-card.simulator .icon { background: #f0f0ff; color: #6c5ce7; }
+.mini-stat { margin-top: 10px; font-size: 12px; color: #006644; background: #d1fef2; padding: 4px 10px; border-radius: 10px; font-weight: 600; }
+
+/* DROPDOWNS (Para que se vean bien) */
+.notif-dropdown, .user-dropdown {
+  position: absolute; top: 140%; right: 0; background: white; border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 10px; border: 1px solid #eee; z-index: 1000;
+  width: 250px; text-align: left;
+}
+.user-menu { font-size: 16px; padding: 8px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; }
+.user-menu:hover { background: rgba(0,0,0,0.05); }

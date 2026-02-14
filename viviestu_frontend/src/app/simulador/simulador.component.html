@@ -1,0 +1,49 @@
+<div class="simulador card">
+  <h3>Simulador de Tiempo (Lima)</h3>
+
+  <div class="row">
+    <label>Origen (lat,lng)</label>
+    <input type="number" step="0.0001" [(ngModel)]="originLat" placeholder="Latitud" />
+    <input type="number" step="0.0001" [(ngModel)]="originLng" placeholder="Longitud" />
+  </div>
+
+  <div class="row">
+    <label>Destino (preset)</label>
+    <select [(ngModel)]="selectedPreset" (change)="usePreset()">
+      <option value="">-- seleccionar --</option>
+      <option *ngFor="let p of presets" [value]="p.name">{{p.name}}</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>Destino (lat,lng) — puedes editar</label>
+    <input type="number" step="0.0001" [(ngModel)]="destLat" placeholder="Latitud destino" />
+    <input type="number" step="0.0001" [(ngModel)]="destLng" placeholder="Longitud destino" />
+  </div>
+
+  <div class="row">
+    <label>Velocidad promedio (km/h)</label>
+    <input type="number" [(ngModel)]="avgSpeed" [value]="30" />
+  </div>
+
+  <div class="actions">
+  <button (click)="calcular()">Calcular tiempo</button>
+    <button (click)="clear()" class="outline">Limpiar</button>
+  </div>
+
+  <div *ngIf="loading" class="result">Calculando...</div>
+
+  <div *ngIf="times" class="result">
+    <p>Distancia aprox.: <strong>{{times.distanceKm | number:'1.2-2'}} km</strong> (fuente: {{times.source}})</p>
+    <ul>
+      <li>Caminar: <strong *ngIf="times.walking !== null">{{times.walking}} minutos</strong><span *ngIf="times.walking === null"> — no disponible</span></li>
+      <li>Bicicleta: <strong *ngIf="times.bicycling !== null">{{times.bicycling}} minutos</strong><span *ngIf="times.bicycling === null"> — no disponible</span></li>
+      <li>Transporte privado (taxi/conduciendo): <strong *ngIf="times.driving !== null">{{times.driving}} minutos</strong><span *ngIf="times.driving === null"> — no disponible</span></li>
+    </ul>
+  </div>
+
+  <div *ngIf="!times && !loading && estimatedMinutes != null" class="result">
+    <p>Distancia aprox.: <strong>{{distanceKm | number:'1.2-2'}} km</strong></p>
+    <p>Tiempo estimado (promedio): <strong>{{estimatedMinutes}} minutos</strong></p>
+  </div>
+</div>
